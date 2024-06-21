@@ -13,8 +13,46 @@ pub struct HrleVec<T> {
     runs: Vec<InternalRun<T>>,
 }
 
+/// Represent a run inside the `HrleVec`, can be obtained from the [`runs`](struct.HrleVec.html#method.runs). A run is a serie of the same value.
+///
+/// # Example
+///
+/// ```
+/// # use hrle_vec::{HrleVec, Run, RunValue};
+/// let hrle = HrleVec::from(&[1, 2, 3, 1, 2, 3, 3][..]);
+///
+/// let mut iterator = hrle.runs_iter();
+/// assert_eq!(
+///     iterator.next(),
+///     Some(Run {
+///         len: 6,
+///         value: RunValue::Group {
+///             count: 2,
+///             values: HrleVec::from(&[&1, &2, &3][..])
+///         }
+///     })
+/// );
+/// assert_eq!(
+///     iterator.next(),
+///     Some(Run {
+///         len: 1,
+///         value: RunValue::One {
+///             value: &3
+///         }
+///     })
+/// );
+/// assert_eq!(iterator.next(), None);
+/// ```
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
-pub struct InternalRun<T> {
+pub struct Run<T> {
+    /// The length of this run.
+    pub len: usize,
+    /// The value of this run.
+    pub value: RunValue<T>,
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
+pub(crate) struct InternalRun<T> {
     end: usize,
     value: RunValue<T>,
 }
@@ -103,10 +141,16 @@ impl<T> HrleVec<T> {
         self.runs.clear();
     }
 
-    /// Returns an iterator that can be used to iterate over the runs.
-    pub fn runs_iter(&self) -> std::slice::Iter<InternalRun<T>> {
-        // TODO: Run<T>
+    pub(crate) fn internal_runs_iter(&self) -> std::slice::Iter<InternalRun<T>> {
         self.runs.iter()
+    }
+
+    /// Returns an iterator that can be used to iterate over the runs.
+    pub fn runs_iter(&self) -> iter::Runs<T> {
+        iter::Runs {
+            hrle: self,
+            run_index: 0,
+        }
     }
 
     /// Returns an iterator over values. Comparable to a `Vec` iterator.
@@ -175,9 +219,14 @@ impl<T> HrleVec<T> {
     }
 
     /// Returns the last run, or None if it is empty.
-    pub fn last_run(&self) -> Option<&InternalRun<T>> {
-        // TODO: Run<T>
-        self.runs.last()
+    pub fn last_run(&self) -> Option<Run<&T>> {
+        match self.runs.last() {
+            Some(run) => Some(Run {
+                len: run.end + 1,
+                value: run.value.as_ref(),
+            }),
+            None => None,
+        }
     }
 
     /// Returns the last value, or None if it is empty.
@@ -225,6 +274,19 @@ impl<T> HrleVec<T> {
             start += run.len().get();
         }
         start
+    }
+
+    pub fn as_ref(&self) -> HrleVec<&T> {
+        HrleVec {
+            runs: self
+                .runs
+                .iter()
+                .map(|run| InternalRun {
+                    end: run.end,
+                    value: run.value.as_ref(),
+                })
+                .collect(),
+        }
     }
 }
 
@@ -304,9 +366,18 @@ impl<T> RunValue<T> {
         match self {
             RunValue::One { .. } => nz!(1_usize),
             RunValue::Group { count, values, .. } => {
-                NonZeroUsize::new(count * values.runs_iter().map(|r| r.len().get()).sum::<usize>())
-                    .unwrap()
+                NonZeroUsize::new(count * values.runs_iter().map(|r| r.len).sum::<usize>()).unwrap()
             }
+        }
+    }
+
+    pub fn as_ref(&self) -> RunValue<&T> {
+        match self {
+            RunValue::One { value, .. } => RunValue::One { value },
+            RunValue::Group { count, values, .. } => RunValue::Group {
+                count: *count,
+                values: values.as_ref(),
+            },
         }
     }
 }
