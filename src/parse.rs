@@ -1,4 +1,4 @@
-use crate::{HrleVec, Run, RunValue};
+use crate::{HrleVec, InternalRun, RunValue};
 
 pub(crate) fn encode<T: Clone + Eq>(v: &[T]) -> HrleVec<T> {
     let mut idx = 0;
@@ -7,7 +7,7 @@ pub(crate) fn encode<T: Clone + Eq>(v: &[T]) -> HrleVec<T> {
         let best_run = find_best_run(v, idx);
         let end = idx + best_run.len().get() - 1;
         idx += best_run.len().get();
-        result.push(Run {
+        result.push(InternalRun {
             end,
             value: best_run,
         });

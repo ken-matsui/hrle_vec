@@ -1,6 +1,6 @@
 use std::fmt::{Display, Formatter, Result as FmtResult};
 
-use crate::{HrleVec, Run, RunValue};
+use crate::{HrleVec, InternalRun, RunValue};
 
 impl<T: Display> Display for HrleVec<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
@@ -8,7 +8,7 @@ impl<T: Display> Display for HrleVec<T> {
     }
 }
 
-impl<T: Display> Display for Run<T> {
+impl<T: Display> Display for InternalRun<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         write!(f, "{}", self.value)
     }

@@ -10,11 +10,11 @@ use nonzero::nonzero as nz;
 
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct HrleVec<T> {
-    runs: Vec<Run<T>>,
+    runs: Vec<InternalRun<T>>,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
-pub struct Run<T> {
+pub struct InternalRun<T> {
     end: usize,
     value: RunValue<T>,
 }
@@ -104,7 +104,8 @@ impl<T> HrleVec<T> {
     }
 
     /// Returns an iterator that can be used to iterate over the runs.
-    pub fn runs_iter(&self) -> std::slice::Iter<Run<T>> {
+    pub fn runs_iter(&self) -> std::slice::Iter<InternalRun<T>> {
+        // TODO: Run<T>
         self.runs.iter()
     }
 
@@ -174,7 +175,8 @@ impl<T> HrleVec<T> {
     }
 
     /// Returns the last run, or None if it is empty.
-    pub fn last_run(&self) -> Option<&Run<T>> {
+    pub fn last_run(&self) -> Option<&InternalRun<T>> {
+        // TODO: Run<T>
         self.runs.last()
     }
 
@@ -191,11 +193,11 @@ impl<T> HrleVec<T> {
     /// ```
     pub fn last(&self) -> Option<&T> {
         match self.runs.last() {
-            Some(Run {
+            Some(InternalRun {
                 value: RunValue::One { value, .. },
                 ..
             }) => Some(value),
-            Some(Run {
+            Some(InternalRun {
                 value: RunValue::Group { values, .. },
                 ..
             }) => values.last(),
@@ -291,7 +293,7 @@ impl<T: Eq + Clone> HrleVec<T> {
     }
 }
 
-impl<T> Run<T> {
+impl<T> InternalRun<T> {
     pub fn len(&self) -> NonZeroUsize {
         self.value.len()
     }
