@@ -6,7 +6,6 @@ mod parse;
 use std::num::NonZeroUsize;
 
 use itertools::repeat_n;
-use nonzero::nonzero as nz;
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -465,7 +464,7 @@ impl<T> InternalRun<T> {
 impl<T> RunValue<T> {
     pub fn len(&self) -> NonZeroUsize {
         match self {
-            RunValue::One { .. } => nz!(1_usize),
+            RunValue::One { .. } => unsafe { NonZeroUsize::new_unchecked(1) },
             RunValue::Group { count, values, .. } => {
                 NonZeroUsize::new(count * values.runs_iter().map(|r| r.len).sum::<usize>()).unwrap()
             }

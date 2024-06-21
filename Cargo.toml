@@ -17,5 +17,4 @@ serialize = ["serde"]
 
 [dependencies]
 itertools = "0.13.0"
-nonzero = "0.2.0"
 serde = {version = "1.0", features = ["derive"], optional = true}
