@@ -41,6 +41,13 @@ impl<T> Index<usize> for HrleVec<T> {
     }
 }
 
+impl<T: Eq + Clone> Extend<T> for HrleVec<T> {
+    fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
+        let vec = self.to_vec().into_iter().chain(iter).collect::<Vec<T>>();
+        *self = HrleVec::from(&vec[..]);
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

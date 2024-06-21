@@ -55,3 +55,11 @@ impl<'a, T: 'a> DoubleEndedIterator for Iter<'a, T> {
         Some(value)
     }
 }
+
+impl<T: Eq + Clone> FromIterator<T> for HrleVec<T> {
+    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+        let mut hrle = HrleVec::new();
+        hrle.extend(iter);
+        hrle
+    }
+}
