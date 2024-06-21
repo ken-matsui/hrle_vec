@@ -5,10 +5,7 @@ pub(crate) fn encode<T: Clone + Eq>(v: &[T]) -> Vec<Run<T>> {
     let mut result = Vec::new();
     while idx < v.len() {
         let best_run = find_best_run(v, idx);
-        if best_run.len() < 1 {
-            panic!("Invalid run length");
-        }
-        idx += best_run.len();
+        idx += best_run.len().get();
         result.push(best_run);
     }
     result

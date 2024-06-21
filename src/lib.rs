@@ -2,6 +2,10 @@ mod display;
 mod impls;
 mod parse;
 
+use std::num::NonZeroUsize;
+
+use nonzero::nonzero as nz;
+
 pub struct HrleVec<T> {
     runs: Vec<Run<T>>,
 }
@@ -47,10 +51,13 @@ impl<T: Clone> HrleVec<T> {
 }
 
 impl<T> Run<T> {
-    pub fn len(&self) -> usize {
+    pub fn len(&self) -> NonZeroUsize {
         match self {
-            Run::One(_) => 1,
-            Run::Group { count, values } => count * values.iter().map(|r| r.len()).sum::<usize>(),
+            Run::One(_) => nz!(1_usize),
+            Run::Group { count, values } => {
+                NonZeroUsize::new(count * values.iter().map(|r| r.len().get()).sum::<usize>())
+                    .unwrap()
+            }
         }
     }
 }
