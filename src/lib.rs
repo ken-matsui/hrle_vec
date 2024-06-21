@@ -25,10 +25,32 @@ pub enum RunValue<T> {
 }
 
 impl<T> HrleVec<T> {
+    /// Constructs a new empty `HrleVec<T>`.
+    ///
+    /// The `HrleVec` will not allocate until elements are pushed onto it.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let hrle = HrleVec::<i32>::new();
+    /// ```
     pub fn new() -> Self {
-        Self { runs: vec![] }
+        Self { runs: Vec::new() }
     }
 
+    /// Constructs a new empty `HrleVec<T>` with capacity for the number of runs.
+    ///
+    /// Choosing this value requires knowledge about the composition of the data that is going to be inserted.
+    ///
+    /// # Example
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let hrle = HrleVec::<i32>::with_capacity(10);
+    ///
+    /// // The hrle_vector contains no items, even though it has capacity for more
+    /// assert_eq!(hrle.len(), 0);
+    /// ```
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
             runs: Vec::with_capacity(capacity),
@@ -39,12 +61,20 @@ impl<T> HrleVec<T> {
         self.runs.is_empty()
     }
 
+    /// Clears the vector, removing all values.
+    ///
+    /// Note that this method has no effect on the allocated capacity of the vector.
+    ///
+    /// # Examples
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let mut hrle = HrleVec::from(&[1, 1, 1, 1, 2, 2, 3][..]);
+    ///
+    /// hrle.clear();
+    /// assert!(hrle.is_empty());
+    /// ```
     pub fn clear(&mut self) {
         self.runs.clear();
-    }
-
-    pub fn shrink_to_fit(&mut self) {
-        self.runs.shrink_to_fit();
     }
 
     /// Returns an iterator that can be used to iterate over the runs.
