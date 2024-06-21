@@ -1,6 +1,15 @@
 [package]
+authors = ["Ken Matsui <26405363+ken-matsui@users.noreply.github.com>"]
+categories = ["data-structures"]
+description = "A vector like struct that stores data with hierarchical run-length encoding"
+documentation = "https://docs.rs/hrle_vec"
 edition = "2021"
+homepage = "https://github.com/ken-matsui/hrle_vec#readme"
+keywords = ["hrle", "vec", "vector", "hrlevec", "rle", "rlevec"]
+license = "MIT"
 name = "hrle_vec"
+readme = "README.md"
+repository = "https://github.com/ken-matsui/hrle_vec/"
 version = "0.1.0"
 
 [features]
