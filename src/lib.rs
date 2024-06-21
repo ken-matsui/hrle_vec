@@ -146,6 +146,35 @@ impl<T> HrleVec<T> {
     }
 
     /// Returns an iterator that can be used to iterate over the runs.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use hrle_vec::{HrleVec, Run, RunValue};
+    /// let hrle = HrleVec::from(&[1, 2, 3, 1, 2, 3, 3][..]);
+    ///
+    /// let mut iterator = hrle.runs_iter();
+    /// assert_eq!(
+    ///     iterator.next(),
+    ///     Some(Run {
+    ///         len: 6,
+    ///         value: RunValue::Group {
+    ///             count: 2,
+    ///             values: HrleVec::from(&[&1, &2, &3][..])
+    ///         }
+    ///     })
+    /// );
+    /// assert_eq!(
+    ///     iterator.next(),
+    ///     Some(Run {
+    ///         len: 1,
+    ///         value: RunValue::One {
+    ///             value: &3
+    ///         }
+    ///     })
+    /// );
+    /// assert_eq!(iterator.next(), None);
+    /// ```
     pub fn runs_iter(&self) -> iter::Runs<T> {
         iter::Runs {
             hrle: self,
@@ -219,10 +248,54 @@ impl<T> HrleVec<T> {
     }
 
     /// Returns the last run, or None if it is empty.
+    ///
+    /// # Example
+    /// ```
+    /// # use hrle_vec::{HrleVec, Run, RunValue};
+    /// let mut hrle = HrleVec::new();
+    ///
+    /// assert_eq!(hrle.last_run(), None);
+    ///
+    /// hrle.push(1);
+    /// hrle.push(1);
+    /// hrle.push(1);
+    /// hrle.push(1);
+    ///
+    /// assert_eq!(
+    ///     hrle.last_run(),
+    ///     Some(Run {
+    ///         len: 4,
+    ///         value: RunValue::Group {
+    ///             count: 4,
+    ///             values: HrleVec::from(&[&1][..])
+    ///         }
+    ///     })
+    /// );
+    ///
+    /// hrle.push(2);
+    /// hrle.push(2);
+    /// hrle.push(3);
+    ///
+    /// assert_eq!(
+    ///     hrle.last_run(),
+    ///     Some(Run {
+    ///         len: 1,
+    ///         value: RunValue::One {
+    ///             value: &3
+    ///         }
+    ///     })
+    /// );
+    /// ```
     pub fn last_run(&self) -> Option<Run<&T>> {
+        let prev_end = if self.runs.len() >= 2 {
+            self.runs[self.runs.len() - 2].end + 1
+        } else {
+            0
+        };
+
         match self.runs.last() {
             Some(run) => Some(Run {
-                len: run.end + 1,
+                len: run.end + 1 - prev_end,
                 value: run.value.as_ref(),
             }),
             None => None,
