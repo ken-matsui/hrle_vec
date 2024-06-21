@@ -8,6 +8,10 @@ use std::num::NonZeroUsize;
 use itertools::repeat_n;
 use nonzero::nonzero as nz;
 
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct HrleVec<T> {
     runs: Vec<InternalRun<T>>,
@@ -51,12 +55,14 @@ pub struct Run<T> {
     pub value: RunValue<T>,
 }
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub(crate) struct InternalRun<T> {
     end: usize,
     value: RunValue<T>,
 }
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub enum RunValue<T> {
     One { value: T },

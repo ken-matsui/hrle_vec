@@ -1,8 +1,12 @@
 [package]
+edition = "2021"
 name = "hrle_vec"
 version = "0.1.0"
-edition = "2021"
+
+[features]
+serialize = ["serde"]
 
 [dependencies]
 itertools = "0.13.0"
 nonzero = "0.2.0"
+serde = {version = "1.0", features = ["derive"], optional = true}
