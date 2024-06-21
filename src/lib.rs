@@ -5,6 +5,7 @@ mod parse;
 
 use std::num::NonZeroUsize;
 
+use itertools::repeat_n;
 use nonzero::nonzero as nz;
 
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
@@ -27,7 +28,7 @@ pub enum RunValue<T> {
 impl<T> HrleVec<T> {
     /// Constructs a new empty `HrleVec<T>`.
     ///
-    /// The `HrleVec` will not allocate until elements are pushed onto it.
+    /// The hrle_vector will not allocate until elements are pushed onto it.
     ///
     /// # Examples
     ///
@@ -46,10 +47,24 @@ impl<T> HrleVec<T> {
     /// # Example
     /// ```
     /// # use hrle_vec::HrleVec;
-    /// let hrle = HrleVec::<i32>::with_capacity(10);
+    /// let mut hrle = HrleVec::<i32>::with_capacity(10);
     ///
     /// // The hrle_vector contains no items, even though it has capacity for more
     /// assert_eq!(hrle.len(), 0);
+    ///
+    /// // These are all done without reallocating...
+    /// for i in 0..10 {
+    ///    hrle.push(i);
+    /// }
+    ///
+    /// // The hrle_vector contains 10 runs and 10 elements too...
+    /// assert_eq!(hrle.len(), 10);
+    /// assert_eq!(hrle.runs_len(), 10);
+    ///
+    /// // this definitely won't reallocate the runs
+    /// hrle.push(10);
+    /// // while this may make the hrle_vector reallocate
+    /// hrle.push(11);
     /// ```
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
@@ -57,6 +72,17 @@ impl<T> HrleVec<T> {
         }
     }
 
+    /// Returns `true` if the hrle_vector contains no elements.
+    ///
+    /// # Example
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let mut hrle = HrleVec::new();
+    /// assert!(hrle.is_empty());
+    ///
+    /// hrle.push(1);
+    /// assert!(!hrle.is_empty());
+    /// ```
     pub fn is_empty(&self) -> bool {
         self.runs.is_empty()
     }
@@ -82,6 +108,25 @@ impl<T> HrleVec<T> {
         self.runs.iter()
     }
 
+    /// Returns an iterator over values. Comparable to a `Vec` iterator.
+    ///
+    /// # Example
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let mut hrle = HrleVec::new();
+    /// hrle.push(1);
+    /// hrle.push(1);
+    /// hrle.push(2);
+    /// hrle.push(3);
+    ///
+    /// let mut iterator = hrle.iter();
+    ///
+    /// assert_eq!(iterator.next(), Some(&1));
+    /// assert_eq!(iterator.next(), Some(&1));
+    /// assert_eq!(iterator.next(), Some(&2));
+    /// assert_eq!(iterator.next(), Some(&3));
+    /// assert_eq!(iterator.next(), None);
+    /// ```
     pub fn iter(&self) -> iter::Iter<T> {
         iter::Iter {
             hrle: self,
@@ -89,10 +134,38 @@ impl<T> HrleVec<T> {
         }
     }
 
+    /// Returns the number of runs
+    ///
+    /// # Example
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let mut hrle = HrleVec::new();
+    /// assert_eq!(hrle.runs_len(), 0);
+    ///
+    /// hrle.push(1);
+    /// hrle.push(1);
+    /// assert_eq!(hrle.runs_len(), 1);
+    ///
+    /// hrle.push(2);
+    /// hrle.push(3);
+    /// assert_eq!(hrle.runs_len(), 3);
+    /// ```
     pub fn runs_len(&self) -> usize {
         self.runs.len()
     }
 
+    /// Returns the number of elements in the hrle_vector.
+    ///
+    /// # Example
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let mut hrle = HrleVec::new();
+    /// hrle.push(1);
+    /// hrle.push(1);
+    /// hrle.push(2);
+    ///
+    /// assert_eq!(hrle.len(), 3);
+    /// ```
     pub fn len(&self) -> usize {
         match self.runs.last() {
             Some(run) => run.end + 1,
@@ -100,6 +173,7 @@ impl<T> HrleVec<T> {
         }
     }
 
+    /// Returns the last run, or None if it is empty.
     pub fn last_run(&self) -> Option<&Run<T>> {
         self.runs.last()
     }
@@ -144,6 +218,25 @@ impl<T> HrleVec<T> {
 impl<T: Clone> HrleVec<T> {
     pub fn to_vec(&self) -> Vec<T> {
         self.iter().cloned().collect()
+    }
+}
+
+impl<T: Eq + Clone> HrleVec<T> {
+    pub fn push(&mut self, value: T) {
+        self.push_n(1, value);
+    }
+
+    pub fn push_n(&mut self, count: usize, value: T) {
+        if count == 0 {
+            return;
+        }
+
+        let vec = self
+            .to_vec()
+            .into_iter()
+            .chain(repeat_n(value, count))
+            .collect::<Vec<T>>();
+        *self = HrleVec::from(&vec[..]);
     }
 }
 
