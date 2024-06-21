@@ -227,16 +227,56 @@ impl<T> HrleVec<T> {
 }
 
 impl<T: Clone> HrleVec<T> {
+    /// Construct a `Vec<T>` from this `HrleVec`.
+    ///
+    /// The values of the `HrleVec` are cloned to produce the final `Vec`.
+    /// This can be usefull for debugging.
+    ///
+    /// # Example
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let slice = &[0, 0, 0, 1, 1, 99, 9];
+    /// let hrle = HrleVec::from(&slice[..]);
+    /// let vec = hrle.to_vec();
+    ///
+    /// assert_eq!(vec.as_slice(), slice);
+    /// ```
     pub fn to_vec(&self) -> Vec<T> {
         self.iter().cloned().collect()
     }
 }
 
 impl<T: Eq + Clone> HrleVec<T> {
+    /// Appends an element to the back of this hrle_vector.
+    ///
+    /// # Panics
+    /// Panics if the number of elements in the vector overflows a usize.
+    ///
+    /// # Example
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let mut hrle = HrleVec::new();
+    /// hrle.push(1);
+    /// assert_eq!(hrle[0], 1);
+    /// ```
     pub fn push(&mut self, value: T) {
         self.push_n(1, value);
     }
 
+    /// Appends the same element n times to the back of this hrle_vec.
+    ///
+    /// # Panics
+    /// Panics if the number of elements in the vector overflows a usize.
+    ///
+    /// # Example
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let mut hrle = HrleVec::new();
+    ///
+    /// // Push 10 times a 2
+    /// hrle.push_n(10, 2);
+    /// assert_eq!(hrle[9], 2);
+    /// ```
     pub fn push_n(&mut self, count: usize, value: T) {
         if count == 0 {
             return;
