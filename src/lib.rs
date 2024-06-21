@@ -7,13 +7,16 @@ use std::num::NonZeroUsize;
 use nonzero::nonzero as nz;
 
 pub struct HrleVec<T> {
-    runs: Vec<Run<T>>,
+    runs: Vec<RunValue<T>>,
 }
 
 #[derive(Debug, Clone)]
-pub enum Run<T> {
+pub enum RunValue<T> {
     One(T),
-    Group { count: usize, values: Vec<Run<T>> },
+    Group {
+        count: usize,
+        values: Vec<RunValue<T>>,
+    },
 }
 
 impl<T> HrleVec<T> {
@@ -50,11 +53,11 @@ impl<T: Clone> HrleVec<T> {
     }
 }
 
-impl<T> Run<T> {
+impl<T> RunValue<T> {
     pub fn len(&self) -> NonZeroUsize {
         match self {
-            Run::One(_) => nz!(1_usize),
-            Run::Group { count, values } => {
+            RunValue::One(_) => nz!(1_usize),
+            RunValue::Group { count, values } => {
                 NonZeroUsize::new(count * values.iter().map(|r| r.len().get()).sum::<usize>())
                     .unwrap()
             }

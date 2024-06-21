@@ -1,6 +1,6 @@
-use crate::Run;
+use crate::RunValue;
 
-pub(crate) fn encode<T: Clone + Eq>(v: &[T]) -> Vec<Run<T>> {
+pub(crate) fn encode<T: Clone + Eq>(v: &[T]) -> Vec<RunValue<T>> {
     let mut idx = 0;
     let mut result = Vec::new();
     while idx < v.len() {
@@ -11,7 +11,7 @@ pub(crate) fn encode<T: Clone + Eq>(v: &[T]) -> Vec<Run<T>> {
     result
 }
 
-fn find_best_run<T: Clone + Eq>(v: &[T], start: usize) -> Run<T> {
+fn find_best_run<T: Clone + Eq>(v: &[T], start: usize) -> RunValue<T> {
     let mut seq_length = 1;
     while start + seq_length * 2 <= v.len() {
         if v[start..start + seq_length] == v[start + seq_length..start + 2 * seq_length] {
@@ -26,25 +26,25 @@ fn find_best_run<T: Clone + Eq>(v: &[T], start: usize) -> Run<T> {
             }
 
             let repeated_seq = &v[start..start + seq_length];
-            return Run::Group {
+            return RunValue::Group {
                 count,
                 values: encode(repeated_seq),
             };
         }
         seq_length += 1;
     }
-    Run::One(v[start].clone())
+    RunValue::One(v[start].clone())
 }
 
-pub(crate) fn decode<T: Clone>(r: &[Run<T>]) -> Vec<T> {
+pub(crate) fn decode<T: Clone>(r: &[RunValue<T>]) -> Vec<T> {
     r.iter().flat_map(|run| run.decode()).collect()
 }
 
-impl<T: Clone> Run<T> {
+impl<T: Clone> RunValue<T> {
     pub fn decode(&self) -> Vec<T> {
         match self {
-            Run::One(v) => vec![v.clone()],
-            Run::Group { count, values } => values
+            RunValue::One(v) => vec![v.clone()],
+            RunValue::Group { count, values } => values
                 .iter()
                 .map(|r| r.decode())
                 .cycle()

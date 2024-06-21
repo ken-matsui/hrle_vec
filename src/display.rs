@@ -1,12 +1,12 @@
-use crate::{HrleVec, Run};
+use crate::{HrleVec, RunValue};
 
 use std::fmt::{Display, Formatter, Result as FmtResult};
 
-impl<T: Display> Display for Run<T> {
+impl<T: Display> Display for RunValue<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         match self {
-            Run::One(v) => write!(f, "{}", v),
-            Run::Group { count, values } => {
+            RunValue::One(v) => write!(f, "{}", v),
+            RunValue::Group { count, values } => {
                 write!(f, "({}", count)?;
                 for value in values {
                     write!(f, "{}", value)?;
