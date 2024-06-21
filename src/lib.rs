@@ -95,7 +95,7 @@ impl<T> HrleVec<T> {
 
     pub fn len(&self) -> usize {
         match self.runs.last() {
-            Some(run) => usize::try_from(run.end).unwrap() + 1,
+            Some(run) => run.end + 1,
             None => 0,
         }
     }

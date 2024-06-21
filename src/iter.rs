@@ -18,7 +18,7 @@ impl<'a, T: 'a> Iterator for Iter<'a, T> {
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
-        let len = self.hrle.len() - usize::try_from(self.index).unwrap();
+        let len = self.hrle.len() - self.index;
         (len, Some(len))
     }
 
