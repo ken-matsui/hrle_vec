@@ -202,10 +202,7 @@ impl<T> HrleVec<T> {
     /// assert_eq!(iterator.next(), None);
     /// ```
     pub fn iter(&self) -> iter::Iter<T> {
-        iter::Iter {
-            hrle: self,
-            index: 0,
-        }
+        iter::Iter { hrle: self, idx: 0 }
     }
 
     /// Returns the number of runs
@@ -328,14 +325,14 @@ impl<T> HrleVec<T> {
     }
 
     /// Returns the index of the run containing the value with the given index.
-    pub fn run_idx(&self, index: usize) -> usize {
-        match self.runs.binary_search_by(|run| run.end.cmp(&index)) {
+    pub fn run_idx(&self, idx: usize) -> usize {
+        match self.runs.binary_search_by(|run| run.end.cmp(&idx)) {
             Ok(ri) => ri,
             Err(ri) if ri < self.runs.len() => ri,
             _ => panic!(
                 "index out of bounds: the len is {} but the index is {}",
                 self.len(),
-                index
+                idx
             ),
         }
     }

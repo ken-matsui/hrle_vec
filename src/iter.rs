@@ -23,23 +23,23 @@ use crate::{HrleVec, Run};
 /// ```
 pub struct Iter<'a, T: 'a> {
     pub(crate) hrle: &'a HrleVec<T>,
-    pub(crate) index: usize,
+    pub(crate) idx: usize,
 }
 
 impl<'a, T: 'a> Iterator for Iter<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.index == self.hrle.len() {
+        if self.idx == self.hrle.len() {
             return None;
         }
-        let value = &self.hrle[self.index];
-        self.index += 1;
+        let value = &self.hrle[self.idx];
+        self.idx += 1;
         Some(value)
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
-        let len = self.hrle.len() - self.index;
+        let len = self.hrle.len() - self.idx;
         (len, Some(len))
     }
 
@@ -48,14 +48,14 @@ impl<'a, T: 'a> Iterator for Iter<'a, T> {
     }
 
     fn last(self) -> Option<Self::Item> {
-        if self.index == self.hrle.len() {
+        if self.idx == self.hrle.len() {
             return None;
         }
         self.hrle.last()
     }
 
     fn nth(&mut self, n: usize) -> Option<Self::Item> {
-        self.index = min(self.index + n, self.hrle.len());
+        self.idx = min(self.idx + n, self.hrle.len());
         self.next()
     }
 }
@@ -64,11 +64,11 @@ impl<'a, T: 'a> ExactSizeIterator for Iter<'a, T> {}
 
 impl<'a, T: 'a> DoubleEndedIterator for Iter<'a, T> {
     fn next_back(&mut self) -> Option<Self::Item> {
-        if self.hrle.len() == self.index {
+        if self.hrle.len() == self.idx {
             return None;
         }
-        let value = &self.hrle[self.index];
-        self.index -= 1;
+        let value = &self.hrle[self.idx];
+        self.idx -= 1;
         Some(value)
     }
 }

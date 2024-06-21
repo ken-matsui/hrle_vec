@@ -25,18 +25,18 @@ impl<T: Default> Default for HrleVec<T> {
 impl<T> Index<usize> for HrleVec<T> {
     type Output = T;
 
-    fn index(&self, index: usize) -> &T {
-        let ri = self.run_idx(index);
+    fn index(&self, idx: usize) -> &T {
+        let ri = self.run_idx(idx);
         let run = &self.runs[ri];
         match &run.value {
             RunValue::One { value, .. } => value,
-            RunValue::Group { values, .. } if index < self.len() => {
-                &values[(index - self.run_start(ri)) % values.len()]
+            RunValue::Group { values, .. } if idx < self.len() => {
+                &values[(idx - self.run_start(ri)) % values.len()]
             }
             _ => panic!(
                 "index out of bounds: the len is {} but the index is {}",
                 self.len(),
-                index
+                idx
             ),
         }
     }
