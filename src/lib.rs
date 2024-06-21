@@ -6,11 +6,12 @@ use std::num::NonZeroUsize;
 
 use nonzero::nonzero as nz;
 
+#[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct HrleVec<T> {
     runs: Vec<RunValue<T>>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub enum RunValue<T> {
     One(T),
     Group {
