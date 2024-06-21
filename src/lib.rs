@@ -178,6 +178,17 @@ impl<T> HrleVec<T> {
         self.runs.last()
     }
 
+    /// Returns the last value, or None if it is empty.
+    ///
+    /// # Example
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let hrle = HrleVec::from(&[10, 10, 40, 40, 30][..]);
+    /// assert_eq!(hrle.last(), Some(&30));
+    ///
+    /// let hrle = HrleVec::<i32>::new();
+    /// assert_eq!(hrle.last(), None);
+    /// ```
     pub fn last(&self) -> Option<&T> {
         match self.runs.last() {
             Some(Run {
