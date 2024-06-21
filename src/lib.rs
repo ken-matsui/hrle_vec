@@ -178,7 +178,7 @@ impl<T> HrleVec<T> {
     pub fn runs_iter(&self) -> iter::Runs<T> {
         iter::Runs {
             hrle: self,
-            run_index: 0,
+            run_idx: 0,
         }
     }
 
@@ -328,7 +328,7 @@ impl<T> HrleVec<T> {
     }
 
     /// Returns the index of the run containing the value with the given index.
-    pub fn run_index(&self, index: usize) -> usize {
+    pub fn run_idx(&self, index: usize) -> usize {
         match self.runs.binary_search_by(|run| run.end.cmp(&index)) {
             Ok(ri) => ri,
             Err(ri) if ri < self.runs.len() => ri,
@@ -341,9 +341,9 @@ impl<T> HrleVec<T> {
     }
 
     /// Returns the start index of the run with the given index.
-    pub fn run_start(&self, run_index: usize) -> usize {
+    pub fn run_start(&self, run_idx: usize) -> usize {
         let mut start = 0;
-        for run in &self.runs[..run_index] {
+        for run in &self.runs[..run_idx] {
             start += run.len().get();
         }
         start
@@ -360,6 +360,32 @@ impl<T> HrleVec<T> {
                 })
                 .collect(),
         }
+    }
+
+    /// Returns the run at the given index, or None if it does not exist.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use hrle_vec::{HrleVec, Run, RunValue};
+    /// let hrle = HrleVec::from(&[1, 2, 3, 1, 2, 3, 3][..]);
+    ///
+    /// assert_eq!(
+    ///     hrle.get_run(1),
+    ///     Some(Run {
+    ///         len: 1,
+    ///         value: RunValue::One {
+    ///             value: &3
+    ///         }
+    ///     })
+    /// );
+    /// assert_eq!(hrle.get_run(2), None);
+    /// ```
+    pub fn get_run(&self, run_idx: usize) -> Option<Run<&T>> {
+        self.runs.get(run_idx).map(|internal_run| Run {
+            len: internal_run.end + 1 - self.run_start(run_idx),
+            value: internal_run.value.as_ref(),
+        })
     }
 }
 
@@ -427,6 +453,8 @@ impl<T: Eq + Clone> HrleVec<T> {
         *self = HrleVec::from(&vec[..]);
     }
 }
+
+// TODO: set_range, set_hint
 
 impl<T> InternalRun<T> {
     pub fn len(&self) -> NonZeroUsize {

@@ -116,18 +116,18 @@ impl<T: Eq + Clone> FromIterator<T> for HrleVec<T> {
 /// ```
 pub struct Runs<'a, T: 'a> {
     pub(crate) hrle: &'a HrleVec<T>,
-    pub(crate) run_index: usize,
+    pub(crate) run_idx: usize,
 }
 
 impl<'a, T: 'a> Iterator for Runs<'a, T> {
     type Item = Run<&'a T>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.run_index == self.hrle.runs.len() {
+        if self.run_idx == self.hrle.runs.len() {
             return None;
         }
-        let run = &self.hrle.runs[self.run_index];
-        self.run_index += 1;
+        let run = &self.hrle.runs[self.run_idx];
+        self.run_idx += 1;
         Some(Run {
             len: run.len().get(),
             value: run.value.as_ref(),
@@ -135,7 +135,7 @@ impl<'a, T: 'a> Iterator for Runs<'a, T> {
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
-        let len = self.hrle.runs.len() - self.run_index;
+        let len = self.hrle.runs.len() - self.run_idx;
         (len, Some(len))
     }
 
@@ -144,14 +144,14 @@ impl<'a, T: 'a> Iterator for Runs<'a, T> {
     }
 
     fn last(self) -> Option<Self::Item> {
-        if self.run_index == self.hrle.runs.len() {
+        if self.run_idx == self.hrle.runs.len() {
             return None;
         }
         self.hrle.last_run()
     }
 
     fn nth(&mut self, n: usize) -> Option<Self::Item> {
-        self.run_index = min(self.run_index + n, self.hrle.runs.len());
+        self.run_idx = min(self.run_idx + n, self.hrle.runs.len());
         self.next()
     }
 }

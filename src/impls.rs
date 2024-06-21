@@ -26,7 +26,7 @@ impl<T> Index<usize> for HrleVec<T> {
     type Output = T;
 
     fn index(&self, index: usize) -> &T {
-        let ri = self.run_index(index);
+        let ri = self.run_idx(index);
         let run = &self.runs[ri];
         match &run.value {
             RunValue::One { value, .. } => value,
