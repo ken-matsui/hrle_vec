@@ -13,7 +13,9 @@ pub struct HrleVec<T> {
 
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub enum RunValue<T> {
-    One(T),
+    One {
+        value: T,
+    },
     Group {
         count: usize,
         values: Vec<RunValue<T>>,
@@ -57,7 +59,7 @@ impl<T: Clone> HrleVec<T> {
 impl<T> RunValue<T> {
     pub fn len(&self) -> NonZeroUsize {
         match self {
-            RunValue::One(_) => nz!(1_usize),
+            RunValue::One { .. } => nz!(1_usize),
             RunValue::Group { count, values } => {
                 NonZeroUsize::new(count * values.iter().map(|r| r.len().get()).sum::<usize>())
                     .unwrap()

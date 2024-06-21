@@ -33,7 +33,9 @@ fn find_best_run<T: Clone + Eq>(v: &[T], start: usize) -> RunValue<T> {
         }
         seq_length += 1;
     }
-    RunValue::One(v[start].clone())
+    RunValue::One {
+        value: v[start].clone(),
+    }
 }
 
 pub(crate) fn decode<T: Clone>(r: &[RunValue<T>]) -> Vec<T> {
@@ -43,7 +45,7 @@ pub(crate) fn decode<T: Clone>(r: &[RunValue<T>]) -> Vec<T> {
 impl<T: Clone> RunValue<T> {
     pub fn decode(&self) -> Vec<T> {
         match self {
-            RunValue::One(v) => vec![v.clone()],
+            RunValue::One { value } => vec![value.clone()],
             RunValue::Group { count, values } => values
                 .iter()
                 .map(|r| r.decode())
