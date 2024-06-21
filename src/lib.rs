@@ -296,13 +296,10 @@ impl<T> HrleVec<T> {
             0
         };
 
-        match self.runs.last() {
-            Some(run) => Some(Run {
-                len: run.end + 1 - prev_end,
-                value: run.value.as_ref(),
-            }),
-            None => None,
-        }
+        self.runs.last().map(|run| Run {
+            len: run.end + 1 - prev_end,
+            value: run.value.as_ref(),
+        })
     }
 
     /// Returns the last value, or None if it is empty.
