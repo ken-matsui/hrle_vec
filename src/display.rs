@@ -5,7 +5,7 @@ use std::fmt::{Display, Formatter, Result as FmtResult};
 impl<T: Display> Display for Run<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         match self {
-            Run::Just(v) => write!(f, "{}", v),
+            Run::One(v) => write!(f, "{}", v),
             Run::Group { count, values } => {
                 write!(f, "({}", count)?;
                 for value in values {
