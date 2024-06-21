@@ -4,6 +4,7 @@ use std::ops::Index;
 use crate::parse::encode;
 use crate::{HrleVec, RunValue};
 
+#[allow(clippy::from_over_into)]
 impl<T: Clone> Into<Vec<T>> for HrleVec<T> {
     fn into(self) -> Vec<T> {
         self.to_vec()
