@@ -14,7 +14,29 @@ pub enum Run<T> {
 
 impl<T> HrleVec<T> {
     pub fn new() -> Self {
-        HrleVec { runs: vec![] }
+        Self { runs: vec![] }
+    }
+
+    pub fn with_capacity(capacity: usize) -> Self {
+        Self {
+            runs: Vec::with_capacity(capacity),
+        }
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.runs.is_empty()
+    }
+
+    pub fn clear(&mut self) {
+        self.runs.clear();
+    }
+
+    pub fn runs_len(&self) -> usize {
+        self.runs.len()
+    }
+
+    pub fn shrink_to_fit(&mut self) {
+        self.runs.shrink_to_fit();
     }
 }
 
