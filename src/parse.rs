@@ -1,14 +1,18 @@
-use crate::RunValue;
+use crate::{HrleVec, Run, RunValue};
 
-pub(crate) fn encode<T: Clone + Eq>(v: &[T]) -> Vec<RunValue<T>> {
+pub(crate) fn encode<T: Clone + Eq>(v: &[T]) -> HrleVec<T> {
     let mut idx = 0;
     let mut result = Vec::new();
     while idx < v.len() {
         let best_run = find_best_run(v, idx);
+        let end = idx + best_run.len().get() - 1;
         idx += best_run.len().get();
-        result.push(best_run);
+        result.push(Run {
+            end,
+            value: best_run,
+        });
     }
-    result
+    HrleVec { runs: result }
 }
 
 fn find_best_run<T: Clone + Eq>(v: &[T], start: usize) -> RunValue<T> {
@@ -26,9 +30,10 @@ fn find_best_run<T: Clone + Eq>(v: &[T], start: usize) -> RunValue<T> {
             }
 
             let repeated_seq = &v[start..start + seq_length];
+            let encoded_seq = encode(repeated_seq);
             return RunValue::Group {
                 count,
-                values: encode(repeated_seq),
+                values: encoded_seq,
             };
         }
         seq_length += 1;
@@ -38,73 +43,46 @@ fn find_best_run<T: Clone + Eq>(v: &[T], start: usize) -> RunValue<T> {
     }
 }
 
-pub(crate) fn decode<T: Clone>(r: &[RunValue<T>]) -> Vec<T> {
-    r.iter().flat_map(|run| run.decode()).collect()
-}
-
-impl<T: Clone> RunValue<T> {
-    pub fn decode(&self) -> Vec<T> {
-        match self {
-            RunValue::One { value } => vec![value.clone()],
-            RunValue::Group { count, values } => values
-                .iter()
-                .map(|r| r.decode())
-                .cycle()
-                .take(count * values.len())
-                .flatten()
-                .collect(),
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_encode_decode() {
+    fn test_encode() {
         let input = "ABCBCABCBCDEEF".chars().collect::<Vec<char>>();
         let encoded = encode(&input);
         assert_eq!(
             encoded
-                .iter()
-                .fold(String::new(), |acc, r| format!("{}{}", acc, r)),
+                .runs_iter()
+                .fold(String::new(), |acc, run| format!("{}{}", acc, run)),
             "(2A(2BC))D(2E)F"
         );
-        let decoded = decode(&encoded);
-        assert_eq!(decoded, input);
 
         let input = "ABBABBABBABA".chars().collect::<Vec<char>>();
         let encoded = encode(&input);
         assert_eq!(
             encoded
-                .iter()
+                .runs_iter()
                 .fold(String::new(), |acc, r| format!("{}{}", acc, r)),
             "(3A(2B))ABA"
         );
-        let decoded = decode(&encoded);
-        assert_eq!(decoded, input);
 
         let input = "ABCDABCDCDCDCD".chars().collect::<Vec<char>>();
         let encoded = encode(&input);
         assert_eq!(
             encoded
-                .iter()
+                .runs_iter()
                 .fold(String::new(), |acc, r| format!("{}{}", acc, r)),
             "(2ABCD)(3CD)"
         );
-        let decoded = decode(&encoded);
-        assert_eq!(decoded, input);
 
         let input = "ABABABABAB".chars().collect::<Vec<char>>();
         let encoded = encode(&input);
         assert_eq!(
             encoded
-                .iter()
-                .fold(String::new(), |acc, r| format!("{}{}", acc, r)),
+                .runs_iter()
+                .fold(String::new(), |acc, run| format!("{}{}", acc, run)),
             "(5AB)"
         );
-        let decoded = decode(&encoded);
-        assert_eq!(decoded, input);
     }
 }
