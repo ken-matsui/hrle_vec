@@ -1,3 +1,4 @@
+use std::io;
 use std::ops::Index;
 
 use crate::parse::encode;
@@ -45,6 +46,22 @@ impl<T: Eq + Clone> Extend<T> for HrleVec<T> {
     fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
         let vec = self.to_vec().into_iter().chain(iter).collect::<Vec<T>>();
         *self = HrleVec::from(&vec[..]);
+    }
+}
+
+impl io::Write for HrleVec<u8> {
+    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+        self.extend(buf.iter().cloned());
+        Ok(buf.len())
+    }
+
+    fn write_all(&mut self, buf: &[u8]) -> io::Result<()> {
+        self.extend(buf.iter().cloned());
+        Ok(())
+    }
+
+    fn flush(&mut self) -> io::Result<()> {
+        Ok(())
     }
 }
 

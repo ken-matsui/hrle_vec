@@ -1,5 +1,24 @@
 use crate::HrleVec;
 
+/// Immutable `HrleVec` iterator over references of values.
+///
+/// Can be obtained from the [`iter`](struct.HrleVec.html#method.iter).
+///
+/// # Example
+/// ```
+/// # use hrle_vec::HrleVec;
+/// let hrle = HrleVec::from(&[1, 1, 1, 1, 2, 2, 3][..]);
+///
+/// let mut iterator = hrle.iter();
+/// assert_eq!(iterator.next(), Some(&1));
+/// assert_eq!(iterator.next(), Some(&1));
+/// assert_eq!(iterator.next(), Some(&1));
+/// assert_eq!(iterator.next(), Some(&1));
+/// assert_eq!(iterator.next(), Some(&2));
+/// assert_eq!(iterator.next(), Some(&2));
+/// assert_eq!(iterator.next(), Some(&3));
+/// assert_eq!(iterator.next(), None);
+/// ```
 pub struct Iter<'a, T: 'a> {
     pub(crate) hrle: &'a HrleVec<T>,
     pub(crate) index: usize,
