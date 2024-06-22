@@ -4,10 +4,42 @@ use std::iter::repeat;
 use criterion::{criterion_group, criterion_main, Criterion};
 use hrle_vec::HrleVec;
 use rle_vec::RleVec;
-use statistical::{mean, standard_deviation};
+use statistical::{mean, median, standard_deviation};
 
 #[global_allocator]
 static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
+
+/// Format a number with thousands separators.
+// Based on the corresponding libtest functionality, see
+// https://github.com/rust-lang/rust/blob/557359f92512ca88b62a602ebda291f17a953002/library/test/src/bench.rs#L87-L109
+fn thousands_sep(mut n: u64, sep: char) -> String {
+    use std::fmt::Write;
+    let mut output = String::new();
+    let mut trailing = false;
+    for &pow in &[9, 6, 3, 0] {
+        let base = 10_u64.pow(pow);
+        if pow == 0 || trailing || n / base != 0 {
+            if !trailing {
+                write!(output, "{}", n / base).unwrap();
+            } else {
+                write!(output, "{:03}", n / base).unwrap();
+            }
+            if pow != 0 {
+                output.push(sep);
+            }
+            trailing = true;
+        }
+        n %= base;
+    }
+
+    output
+}
+
+/// Format a value as an integer, including thousands-separators.  Copied from
+/// https://github.com/bheisler/criterion.rs/blob/f1ea31a92ff919a455f36b13c9a45fd74559d0fe/src/format.rs
+pub fn integer(n: f64) -> String {
+    thousands_sep(n as u64, ',')
+}
 
 fn benchmark<'a, T: 'a, I: 'a>(c: &mut Criterion, name: &str, iter: &'a I, f: impl Fn(&'a I) -> T) {
     let epoch = jemalloc_ctl::epoch::mib().unwrap();
@@ -23,12 +55,11 @@ fn benchmark<'a, T: 'a, I: 'a>(c: &mut Criterion, name: &str, iter: &'a I, f: im
             mem.push(allocated.read().unwrap().abs_diff(before) as f64);
         })
     });
-    let mean = mean(&mem);
     println!(
-        "test {} - Memory Allocated ... bench: {:.3} MiB (+/- {:.3})\n",
+        "test {} - Memory Allocated ... bench: {:>11} MiB (+/- {})\n",
         name,
-        mean,
-        standard_deviation(&mem, Some(mean)),
+        integer(median(&mem)),
+        integer(standard_deviation(&mem, Some(mean(&mem)))),
     );
 }
 
