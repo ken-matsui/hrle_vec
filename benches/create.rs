@@ -8,10 +8,10 @@ fn bench_10_000_unique_values_from_slice(c: &mut Criterion) {
     let slice = vec.as_slice();
 
     group.bench_with_input(BenchmarkId::new("Hrle", ""), slice, |b, slice| {
-        b.iter(|| HrleVec::from(&slice[..]))
+        b.iter(|| HrleVec::from(slice))
     });
     group.bench_with_input(BenchmarkId::new("Vec", ""), slice, |b, slice| {
-        b.iter(|| Vec::from(&slice[..]))
+        b.iter(|| Vec::from(slice))
     });
 
     group.finish();
@@ -20,7 +20,7 @@ fn bench_10_000_unique_values_from_slice(c: &mut Criterion) {
 fn bench_10_000_unique_values_from_iter(c: &mut Criterion) {
     let mut group = c.benchmark_group("Create 10_000 unique values from iter");
 
-    let iter = (0..10_000).into_iter();
+    let iter = 0..10_000;
 
     group.bench_with_input(BenchmarkId::new("Hrle", ""), &iter, |b, iter| {
         b.iter(|| HrleVec::from_iter(iter.clone()))
