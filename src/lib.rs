@@ -593,8 +593,7 @@ impl<T: Eq + Clone> HrleVec<T> {
     /// # Note
     ///
     /// This method is expensive because it creates a new `HrleVec` from scratch
-    /// every call.  If you need to push many elements, it is better to use
-    /// `set_unencoded`.
+    /// every call.
     ///
     /// # Examples
     ///
