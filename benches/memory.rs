@@ -1,44 +1,23 @@
+use std::fs::{File, OpenOptions};
 use std::hint::black_box;
+use std::io::{Read, Write};
 use std::iter::repeat;
 
 use criterion::{criterion_group, criterion_main, Criterion};
 use hrle_vec::HrleVec;
 use rle_vec::RleVec;
-use statistical::{mean, median, standard_deviation};
+use serde::{Deserialize, Serialize};
+use statistical::{mean, standard_deviation};
 
 #[global_allocator]
 static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
 
-/// Format a number with thousands separators.
-// Based on the corresponding libtest functionality, see
-// https://github.com/rust-lang/rust/blob/557359f92512ca88b62a602ebda291f17a953002/library/test/src/bench.rs#L87-L109
-fn thousands_sep(mut n: u64, sep: char) -> String {
-    use std::fmt::Write;
-    let mut output = String::new();
-    let mut trailing = false;
-    for &pow in &[9, 6, 3, 0] {
-        let base = 10_u64.pow(pow);
-        if pow == 0 || trailing || n / base != 0 {
-            if !trailing {
-                write!(output, "{}", n / base).unwrap();
-            } else {
-                write!(output, "{:03}", n / base).unwrap();
-            }
-            if pow != 0 {
-                output.push(sep);
-            }
-            trailing = true;
-        }
-        n %= base;
-    }
-
-    output
-}
-
-/// Format a value as an integer, including thousands-separators.  Copied from
-/// https://github.com/bheisler/criterion.rs/blob/f1ea31a92ff919a455f36b13c9a45fd74559d0fe/src/format.rs
-pub fn integer(n: f64) -> String {
-    thousands_sep(n as u64, ',')
+#[derive(Serialize, Deserialize)]
+struct BenchmarkResult {
+    name: String,
+    unit: String,
+    value: u64,
+    range: String,
 }
 
 fn benchmark<'a, T: 'a, I: 'a>(c: &mut Criterion, name: &str, iter: &'a I, f: impl Fn(&'a I) -> T) {
@@ -52,15 +31,44 @@ fn benchmark<'a, T: 'a, I: 'a>(c: &mut Criterion, name: &str, iter: &'a I, f: im
             let before = allocated.read().unwrap();
             let _ctx = black_box(f(iter));
             epoch.advance().unwrap();
-            mem.push(allocated.read().unwrap().abs_diff(before) as f64);
+            mem.push(
+                allocated.read().unwrap().abs_diff(before) as f64 * 1024., // to KiB
+            );
         })
     });
-    println!(
-        "test {} - Memory Allocated ... bench: {:>11} MiB (+/- {})\n",
-        name,
-        integer(median(&mem)),
-        integer(standard_deviation(&mem, Some(mean(&mem)))),
-    );
+
+    let mean = mean(&mem);
+    let std_dev = standard_deviation(&mem, Some(mean)) as u64;
+    let mean = mean as u64;
+    println!("=> {name} ... memory allocated: {mean:>11} KiB (+/- {std_dev})\n");
+
+    let result = BenchmarkResult {
+        name: format!("{name} - Memory Allocated"),
+        unit: "KiB".to_string(),
+        value: mean,
+        range: std_dev.to_string(),
+    };
+
+    let file_path = "memory_benchmark_results.json";
+    let mut results = if let Ok(mut file) = File::open(file_path) {
+        let mut data = String::new();
+        file.read_to_string(&mut data).unwrap();
+        serde_json::from_str::<Vec<BenchmarkResult>>(&data).unwrap_or_else(|_| vec![])
+    } else {
+        vec![]
+    };
+
+    results.push(result);
+
+    let json = serde_json::to_string_pretty(&results).unwrap();
+    let mut file = OpenOptions::new()
+        .write(true)
+        .create(true)
+        .truncate(true)
+        .open(file_path)
+        .unwrap();
+
+    writeln!(file, "{}", json).unwrap();
 }
 
 fn hrle_all_dup(c: &mut Criterion) {

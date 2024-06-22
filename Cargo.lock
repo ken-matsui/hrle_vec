@@ -242,6 +242,7 @@ dependencies = [
  "itertools 0.13.0",
  "rle_vec",
  "serde",
+ "serde_json",
  "statistical",
  "tikv-jemalloc-ctl",
  "tikv-jemallocator",

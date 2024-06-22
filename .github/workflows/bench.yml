@@ -26,12 +26,24 @@ jobs:
           path: ./cache
           key: ${{ runner.os }}-benchmark
 
-      - name: Store benchmark result
+      - name: Store runtime benchmark result
         uses: benchmark-action/github-action-benchmark@v1
         with:
-            tool: 'cargo'
-            output-file-path: output.txt
-            # Access token to deploy GitHub Pages branch
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            # Push and deploy GitHub pages branch automatically
-            auto-push: true
+          name: 'Runtime Benchmark'
+          tool: 'cargo'
+          output-file-path: output.txt
+          # Access token to deploy GitHub Pages branch
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Push and deploy GitHub pages branch automatically
+          auto-push: true
+
+      - name: Store memory benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: 'Memory Benchmark'
+          tool: 'customSmallerIsBetter'
+          output-file-path: memory_benchmark_results.json
+          # Access token to deploy GitHub Pages branch
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Push and deploy GitHub pages branch automatically
+          auto-push: true
