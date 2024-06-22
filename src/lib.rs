@@ -18,7 +18,7 @@ pub struct HrleVec<T> {
 
 /// Represent a run inside the `HrleVec`, can be obtained from the [`runs`](struct.HrleVec.html#method.runs). A run is a serie of the same value.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// # use hrle_vec::{HrleVec, Run, RunValue};
@@ -71,6 +71,7 @@ pub(crate) struct InternalRun<T> {
 pub enum RunValue<T> {
     One { value: T },
     Repeat { n: usize, values: HrleVec<T> },
+    Unencoded { values: Vec<T> },
 }
 
 impl<T> HrleVec<T> {
@@ -92,7 +93,7 @@ impl<T> HrleVec<T> {
     ///
     /// Choosing this value requires knowledge about the composition of the data that is going to be inserted.
     ///
-    /// # Example
+    /// # Examples
     /// ```
     /// # use hrle_vec::HrleVec;
     /// let mut hrle = HrleVec::<i32>::with_capacity(10);
@@ -102,17 +103,13 @@ impl<T> HrleVec<T> {
     ///
     /// // These are all done without reallocating...
     /// for i in 0..10 {
-    ///    hrle.push(i);
+    ///    hrle.push_unencoded(i);
     /// }
+    /// hrle.encode();
     ///
-    /// // The hrle_vector contains 10 runs and 10 elements too...
+    /// // The hrle_vector contains 10 runs and 10 elements too.
     /// assert_eq!(hrle.len(), 10);
     /// assert_eq!(hrle.runs_len(), 10);
-    ///
-    /// // this definitely won't reallocate the runs
-    /// hrle.push(10);
-    /// // while this may make the hrle_vector reallocate
-    /// hrle.push(11);
     /// ```
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
@@ -122,13 +119,13 @@ impl<T> HrleVec<T> {
 
     /// Returns `true` if the hrle_vector contains no elements.
     ///
-    /// # Example
+    /// # Examples
     /// ```
     /// # use hrle_vec::HrleVec;
     /// let mut hrle = HrleVec::new();
     /// assert!(hrle.is_empty());
     ///
-    /// hrle.push(1);
+    /// hrle.push_unencoded(1);
     /// assert!(!hrle.is_empty());
     /// ```
     pub fn is_empty(&self) -> bool {
@@ -157,7 +154,7 @@ impl<T> HrleVec<T> {
 
     /// Returns an iterator that can be used to iterate over the runs.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// # use hrle_vec::{HrleVec, Run, RunValue};
@@ -194,14 +191,15 @@ impl<T> HrleVec<T> {
 
     /// Returns an iterator over values. Comparable to a `Vec` iterator.
     ///
-    /// # Example
+    /// # Examples
     /// ```
     /// # use hrle_vec::HrleVec;
     /// let mut hrle = HrleVec::new();
-    /// hrle.push(1);
-    /// hrle.push(1);
-    /// hrle.push(2);
-    /// hrle.push(3);
+    /// hrle.push_unencoded(1);
+    /// hrle.push_unencoded(1);
+    /// hrle.push_unencoded(2);
+    /// hrle.push_unencoded(3);
+    /// hrle.encode();
     ///
     /// let mut iterator = hrle.iter();
     ///
@@ -220,18 +218,20 @@ impl<T> HrleVec<T> {
 
     /// Returns the number of runs
     ///
-    /// # Example
+    /// # Examples
     /// ```
     /// # use hrle_vec::HrleVec;
     /// let mut hrle = HrleVec::new();
     /// assert_eq!(hrle.runs_len(), 0);
     ///
-    /// hrle.push(1);
-    /// hrle.push(1);
+    /// hrle.push_unencoded(1);
+    /// hrle.push_unencoded(1);
+    /// hrle.encode();
     /// assert_eq!(hrle.runs_len(), 1);
     ///
-    /// hrle.push(2);
-    /// hrle.push(3);
+    /// hrle.push_unencoded(2);
+    /// hrle.push_unencoded(3);
+    /// hrle.encode();
     /// assert_eq!(hrle.runs_len(), 3);
     /// ```
     pub fn runs_len(&self) -> usize {
@@ -240,13 +240,13 @@ impl<T> HrleVec<T> {
 
     /// Returns the number of elements in the hrle_vector.
     ///
-    /// # Example
+    /// # Examples
     /// ```
     /// # use hrle_vec::HrleVec;
     /// let mut hrle = HrleVec::new();
-    /// hrle.push(1);
-    /// hrle.push(1);
-    /// hrle.push(2);
+    /// hrle.push_unencoded(1);
+    /// hrle.push_unencoded(1);
+    /// hrle.push_unencoded(2);
     ///
     /// assert_eq!(hrle.len(), 3);
     /// ```
@@ -259,17 +259,18 @@ impl<T> HrleVec<T> {
 
     /// Returns the last run, or None if it is empty.
     ///
-    /// # Example
+    /// # Examples
     /// ```
     /// # use hrle_vec::{HrleVec, Run, RunValue};
     /// let mut hrle = HrleVec::new();
     ///
     /// assert_eq!(hrle.last_run(), None);
     ///
-    /// hrle.push(1);
-    /// hrle.push(1);
-    /// hrle.push(1);
-    /// hrle.push(1);
+    /// hrle.push_unencoded(1);
+    /// hrle.push_unencoded(1);
+    /// hrle.push_unencoded(1);
+    /// hrle.push_unencoded(1);
+    /// hrle.encode();
     ///
     /// assert_eq!(
     ///     hrle.last_run(),
@@ -282,9 +283,10 @@ impl<T> HrleVec<T> {
     ///     })
     /// );
     ///
-    /// hrle.push(2);
-    /// hrle.push(2);
-    /// hrle.push(3);
+    /// hrle.push_unencoded(2);
+    /// hrle.push_unencoded(2);
+    /// hrle.push_unencoded(3);
+    /// hrle.encode();
     ///
     /// assert_eq!(
     ///     hrle.last_run(),
@@ -311,7 +313,7 @@ impl<T> HrleVec<T> {
 
     /// Returns the last value, or None if it is empty.
     ///
-    /// # Example
+    /// # Examples
     /// ```
     /// # use hrle_vec::HrleVec;
     /// let hrle = HrleVec::from(&[10, 10, 40, 40, 30][..]);
@@ -331,6 +333,10 @@ impl<T> HrleVec<T> {
             }) => Some(value),
             Some(InternalRun {
                 value: RunValue::Repeat { values, .. },
+                ..
+            }) => values.last(),
+            Some(InternalRun {
+                value: RunValue::Unencoded { values, .. },
                 ..
             }) => values.last(),
             None => None,
@@ -374,7 +380,7 @@ impl<T> HrleVec<T> {
 
     /// Returns the run at the given index, or None if it does not exist.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// # use hrle_vec::{HrleVec, Run, RunValue};
@@ -405,7 +411,8 @@ impl<T: Clone> HrleVec<T> {
     /// The values of the `HrleVec` are cloned to produce the final `Vec`.
     /// This can be usefull for debugging.
     ///
-    /// # Example
+    /// # Examples
+    ///
     /// ```
     /// # use hrle_vec::HrleVec;
     /// let slice = &[0, 0, 0, 1, 1, 99, 9];
@@ -417,15 +424,71 @@ impl<T: Clone> HrleVec<T> {
     pub fn to_vec(&self) -> Vec<T> {
         self.iter().cloned().collect()
     }
+
+    /// Pushes an unencoded value to the back of this hrle_vec.
+    ///
+    /// # Note
+    ///
+    /// This is useful if you want to push many values efficiently.  Until you
+    /// call `encode`, the values are stored in an unencoded run.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let mut hrle = HrleVec::new();
+    /// hrle.push_unencoded(1);
+    /// assert_eq!(hrle[0], 1);
+    /// ```
+    pub fn push_unencoded(&mut self, value: T) {
+        self.push_n_unencoded(1, value);
+    }
+
+    /// Pushes unencoded values to the back of this hrle_vec.
+    ///
+    /// # Note
+    ///
+    /// This is useful if you want to push many values efficiently.  Until you
+    /// call `encode`, the values are stored in an unencoded run.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let mut hrle = HrleVec::new();
+    /// hrle.push_n_unencoded(10, 1);
+    /// assert_eq!(hrle[9], 1);
+    /// ```
+    pub fn push_n_unencoded(&mut self, count: usize, value: T) {
+        match &mut self.runs.last_mut() {
+            Some(InternalRun {
+                end,
+                value: RunValue::Unencoded { values },
+            }) => {
+                *end += count;
+                values.extend(repeat_n(value, count))
+            }
+            _ => {
+                let run = InternalRun {
+                    end: self.len() + count - 1,
+                    value: RunValue::Unencoded {
+                        values: vec![value; count],
+                    },
+                };
+                self.runs.push(run);
+            }
+        }
+    }
 }
 
 impl<T: Eq + Clone> HrleVec<T> {
     /// Appends an element to the back of this hrle_vector.
     ///
     /// # Note
+    ///
     /// This method is expensive because it creates a new `HrleVec` from scratch
-    /// every call.  If you need to push many elements, it is better to do the
-    /// following:
+    /// every call.  If you need to push many elements, it is better to use
+    /// `push_unencoded` or do the following workaround:
     ///
     /// ```
     /// # use hrle_vec::HrleVec;
@@ -438,9 +501,11 @@ impl<T: Eq + Clone> HrleVec<T> {
     /// operations.
     ///
     /// # Panics
+    ///
     /// Panics if the number of elements in the vector overflows a usize.
     ///
-    /// # Example
+    /// # Examples
+    ///
     /// ```
     /// # use hrle_vec::HrleVec;
     /// let mut hrle = HrleVec::new();
@@ -454,9 +519,10 @@ impl<T: Eq + Clone> HrleVec<T> {
     /// Appends the same element n times to the back of this hrle_vec.
     ///
     /// # Note
+    ///
     /// This method is expensive because it creates a new `HrleVec` from scratch
-    /// every call.  If you need to push many elements, it is better to do the
-    /// following:
+    /// every call.  If you need to push many elements, it is better to use
+    /// `push_n_unencoded` or do the following workaround:
     ///
     /// ```
     /// # use hrle_vec::HrleVec;
@@ -469,9 +535,11 @@ impl<T: Eq + Clone> HrleVec<T> {
     /// operations.
     ///
     /// # Panics
+    ///
     /// Panics if the number of elements in the vector overflows a usize.
     ///
-    /// # Example
+    /// # Examples
+    ///
     /// ```
     /// # use hrle_vec::HrleVec;
     /// let mut hrle = HrleVec::new();
@@ -486,15 +554,35 @@ impl<T: Eq + Clone> HrleVec<T> {
         }
         *self = HrleVec::from_iter(self.to_vec().into_iter().chain(repeat_n(value, count)))
     }
+
+    /// Encodes the hrle_vec.
+    ///
+    /// This is useful if you have a hrle_vec that has been modified by pushing
+    /// elements to the back.
+    ///
+    /// # Examples
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let mut hrle = HrleVec::from(&[1, 2, 1][..]);
+    /// hrle.push_unencoded(2);
+    /// hrle.push_n_unencoded(2, 3);
+    /// hrle.encode();
+    /// assert_eq!(hrle.to_vec(), vec![1, 2, 1, 2, 3, 3]);
+    /// ```
+    pub fn encode(&mut self) {
+        *self = HrleVec::from_iter(self.to_vec());
+    }
 }
 
 impl<T> Run<T> {
     /// Returns the value of the run, if it consists of a single value.
     ///
     /// # Note
+    ///
     /// This method will return None for runs that contain multiple values.
     ///
-    /// # Example
+    /// # Examples
+    ///
     /// ```
     /// # use hrle_vec::HrleVec;
     /// let hrle = HrleVec::from(&[1, 2, 2, 2, 3, 4, 3, 4][..]);
@@ -534,6 +622,7 @@ impl<T> RunValue<T> {
             RunValue::Repeat { n, values, .. } => {
                 NonZeroUsize::new(n * values.runs_iter().map(|r| r.len).sum::<usize>()).unwrap()
             }
+            RunValue::Unencoded { values, .. } => NonZeroUsize::new(values.len()).unwrap(),
         }
     }
 
@@ -544,6 +633,7 @@ impl<T> RunValue<T> {
                 n: *n,
                 values: values.as_ref(),
             },
+            RunValue::Unencoded { .. } => unimplemented!("as_ref: unencoded"),
         }
     }
 }

@@ -6,7 +6,7 @@ use crate::{HrleVec, Run};
 ///
 /// Can be obtained from the [`iter`](struct.HrleVec.html#method.iter).
 ///
-/// # Example
+/// # Examples
 /// ```
 /// # use hrle_vec::HrleVec;
 /// let hrle = HrleVec::from(&[1, 1, 1, 1, 2, 2, 3][..]);
@@ -87,7 +87,7 @@ impl<T: Eq + Clone> FromIterator<T> for HrleVec<T> {
 /// Because internally runs are stored using the end values a new Run is
 /// allocated in each iteration.
 ///
-/// # Example
+/// # Examples
 /// ```
 /// # use hrle_vec::{HrleVec, Run, RunValue};
 /// let hrle = HrleVec::from(&[1, 2, 3, 1, 2, 3, 3][..]);

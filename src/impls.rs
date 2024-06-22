@@ -34,6 +34,7 @@ impl<T> Index<usize> for HrleVec<T> {
             RunValue::Repeat { values, .. } if index < self.len() => {
                 &values[(index - self.run_start(ri)) % values.len()]
             }
+            RunValue::Unencoded { values } => &values[index - self.run_start(ri)],
             _ => panic!(
                 "index out of bounds: the len is {} but the index is {}",
                 self.len(),

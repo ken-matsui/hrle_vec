@@ -31,6 +31,9 @@ impl<T: Display> Display for RunValue<T> {
                 }
                 write!(f, ")")
             }
+            RunValue::Unencoded { values } => {
+                values.iter().try_for_each(|value| write!(f, "{}", value))
+            }
         }
     }
 }
