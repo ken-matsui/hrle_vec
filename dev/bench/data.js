@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1719078920283,
+  "lastUpdate": 1719081336301,
   "repoUrl": "https://github.com/ken-matsui/hrle_vec",
   "entries": {
     "Benchmark": [
@@ -1025,6 +1025,146 @@ window.BENCHMARK_DATA = {
             "name": "Vec: All Unique",
             "value": 73332,
             "range": "± 220",
+            "unit": "ns/iter"
+          }
+        ]
+      }
+    ],
+    "Runtime Benchmark": [
+      {
+        "commit": {
+          "author": {
+            "email": "26405363+ken-matsui@users.noreply.github.com",
+            "name": "Ken Matsui",
+            "username": "ken-matsui"
+          },
+          "committer": {
+            "email": "26405363+ken-matsui@users.noreply.github.com",
+            "name": "Ken Matsui",
+            "username": "ken-matsui"
+          },
+          "distinct": true,
+          "id": "e808666e3d1c9a8855fc580c5aa278eeae845409",
+          "message": "custom bench",
+          "timestamp": "2024-06-22T11:30:40-07:00",
+          "tree_id": "1db3b653a57a1b553825710895a8d3328cdd6934",
+          "url": "https://github.com/ken-matsui/hrle_vec/commit/e808666e3d1c9a8855fc580c5aa278eeae845409"
+        },
+        "date": 1719081336009,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "Create 10_000 unique values from slice/Hrle",
+            "value": 77508547,
+            "range": "± 1023067",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Create 10_000 unique values from slice/Vec",
+            "value": 829,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Create 10_000 unique values from iter/Hrle",
+            "value": 77524115,
+            "range": "± 594954",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Create 10_000 unique values from iter/Vec",
+            "value": 805,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Hrle: All Dup",
+            "value": 50393,
+            "range": "± 478",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Rle: All Dup",
+            "value": 67070,
+            "range": "± 519",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Vec: All Dup",
+            "value": 69233,
+            "range": "± 730",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Hrle: Repeat 1 & 2",
+            "value": 100584,
+            "range": "± 496",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Rle: Repeat 1 & 2",
+            "value": 89754,
+            "range": "± 3137",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Vec: Repeat 1 & 2",
+            "value": 77422,
+            "range": "± 844",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Hrle: Repeat 0..100",
+            "value": 82662,
+            "range": "± 555",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Rle: Repeat 0..100",
+            "value": 88520,
+            "range": "± 3814",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Vec: Repeat 0..100",
+            "value": 77507,
+            "range": "± 488",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Hrle: Repeat 0 & 1 ten times each",
+            "value": 172090,
+            "range": "± 12654",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Rle: Repeat 0 & 1 ten times each",
+            "value": 89519,
+            "range": "± 335",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Vec: Repeat 0 & 1 ten times each",
+            "value": 110497,
+            "range": "± 1940",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Hrle: All Unique",
+            "value": 77697561,
+            "range": "± 75774",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Rle: All Unique",
+            "value": 81838,
+            "range": "± 2108",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Vec: All Unique",
+            "value": 68899,
+            "range": "± 244",
             "unit": "ns/iter"
           }
         ]
