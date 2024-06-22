@@ -183,7 +183,7 @@ impl<T> HrleVec<T> {
     pub fn runs_iter(&self) -> iter::Runs<T> {
         iter::Runs {
             hrle: self,
-            run_idx: 0,
+            run_index: 0,
         }
     }
 
@@ -207,7 +207,10 @@ impl<T> HrleVec<T> {
     /// assert_eq!(iterator.next(), None);
     /// ```
     pub fn iter(&self) -> iter::Iter<T> {
-        iter::Iter { hrle: self, idx: 0 }
+        iter::Iter {
+            hrle: self,
+            index: 0,
+        }
     }
 
     /// Returns the number of runs
@@ -327,22 +330,22 @@ impl<T> HrleVec<T> {
     }
 
     /// Returns the index of the run containing the value with the given index.
-    pub fn run_idx(&self, idx: usize) -> usize {
-        match self.runs.binary_search_by(|run| run.end.cmp(&idx)) {
+    pub fn run_index(&self, index: usize) -> usize {
+        match self.runs.binary_search_by(|run| run.end.cmp(&index)) {
             Ok(ri) => ri,
             Err(ri) if ri < self.runs.len() => ri,
             _ => panic!(
                 "index out of bounds: the len is {} but the index is {}",
                 self.len(),
-                idx
+                index
             ),
         }
     }
 
     /// Returns the start index of the run with the given index.
-    pub fn run_start(&self, run_idx: usize) -> usize {
+    pub fn run_start(&self, run_index: usize) -> usize {
         let mut start = 0;
-        for run in &self.runs[..run_idx] {
+        for run in &self.runs[..run_index] {
             start += run.len().get();
         }
         start
@@ -380,9 +383,9 @@ impl<T> HrleVec<T> {
     /// );
     /// assert_eq!(hrle.get_run(2), None);
     /// ```
-    pub fn get_run(&self, run_idx: usize) -> Option<Run<&T>> {
-        self.runs.get(run_idx).map(|internal_run| Run {
-            len: internal_run.end + 1 - self.run_start(run_idx),
+    pub fn get_run(&self, run_index: usize) -> Option<Run<&T>> {
+        self.runs.get(run_index).map(|internal_run| Run {
+            len: internal_run.end + 1 - self.run_start(run_index),
             value: internal_run.value.as_ref(),
         })
     }
