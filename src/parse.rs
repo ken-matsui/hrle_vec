@@ -3,6 +3,7 @@ use crate::{HrleVec, InternalRun, RunValue};
 pub(crate) fn encode<T: Clone + Eq>(v: &[T]) -> HrleVec<T> {
     let mut index = 0;
     let mut result = Vec::new();
+
     while index < v.len() {
         let best_run = find_best_run(v, index);
         let end = index + best_run.len().get() - 1;
@@ -12,11 +13,13 @@ pub(crate) fn encode<T: Clone + Eq>(v: &[T]) -> HrleVec<T> {
             value: best_run,
         });
     }
+
     HrleVec { runs: result }
 }
 
 fn find_best_run<T: Clone + Eq>(v: &[T], start: usize) -> RunValue<T> {
     let mut seq_length = 1;
+
     while start + seq_length * 2 <= v.len() {
         if v[start..start + seq_length] == v[start + seq_length..start + 2 * seq_length] {
             // There are at least 2 repeats of the sequence.
@@ -38,6 +41,7 @@ fn find_best_run<T: Clone + Eq>(v: &[T], start: usize) -> RunValue<T> {
         }
         seq_length += 1;
     }
+
     RunValue::One {
         value: v[start].clone(),
     }
