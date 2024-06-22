@@ -6,10 +6,9 @@ pub(crate) fn encode<T: Clone + Eq>(v: &[T]) -> HrleVec<T> {
 
     while index < v.len() {
         let best_run = find_best_run(v, index);
-        let end = index + best_run.len().get() - 1;
         index += best_run.len().get();
         result.push(InternalRun {
-            end,
+            end: index - 1,
             value: best_run,
         });
     }
