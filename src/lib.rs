@@ -485,6 +485,39 @@ impl<T: Eq + Clone> HrleVec<T> {
     }
 }
 
+impl<T> Run<T> {
+    /// Returns the value of the run, if it consists of a single value.
+    ///
+    /// # Note
+    /// This method will return None for runs that contain multiple values.
+    ///
+    /// # Example
+    /// ```
+    /// # use hrle_vec::{HrleVec, Run, RunValue};
+    /// let hrle = HrleVec::from(&[1, 2, 2, 2, 3, 4, 3, 4][..]);
+    ///
+    /// assert_eq!(hrle.get_run(0).unwrap().get_value(), Some(&&1));
+    /// assert_eq!(hrle.get_run(1).unwrap().get_value(), Some(&&2));
+    /// assert_eq!(hrle.get_run(2).unwrap().get_value(), None, "contains 3 & 4");
+    /// assert_eq!(hrle.get_run(3), None);
+    /// ```
+    pub fn get_value(&self) -> Option<&T> {
+        match &self.value {
+            RunValue::One { value, .. } => Some(value),
+            RunValue::Group { values, .. } if values.runs_len() == 1 => {
+                values.get_run(0).and_then(|r| {
+                    if let RunValue::One { value, .. } = r.value {
+                        Some(value)
+                    } else {
+                        None
+                    }
+                })
+            }
+            _ => None,
+        }
+    }
+}
+
 impl<T> InternalRun<T> {
     pub fn len(&self) -> NonZeroUsize {
         self.value.len()
