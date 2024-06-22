@@ -411,6 +411,21 @@ impl<T: Clone> HrleVec<T> {
 impl<T: Eq + Clone> HrleVec<T> {
     /// Appends an element to the back of this hrle_vector.
     ///
+    /// # Note
+    /// This method is expensive because it creates a new `HrleVec` from scratch
+    /// every call.  If you need to push many elements, it is better to do the
+    /// following:
+    ///
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let mut hrle = HrleVec::new();
+    /// let new_elements = vec![1, 1, 2, 2, 1, 1, 2, 2];
+    /// hrle = HrleVec::from_iter(hrle.to_vec().into_iter().chain(new_elements.into_iter()));
+    /// ```
+    ///
+    /// This reduces the number of hierarchal run-length encoding/decoding
+    /// operations.
+    ///
     /// # Panics
     /// Panics if the number of elements in the vector overflows a usize.
     ///
@@ -426,6 +441,21 @@ impl<T: Eq + Clone> HrleVec<T> {
     }
 
     /// Appends the same element n times to the back of this hrle_vec.
+    ///
+    /// # Note
+    /// This method is expensive because it creates a new `HrleVec` from scratch
+    /// every call.  If you need to push many elements, it is better to do the
+    /// following:
+    ///
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let mut hrle = HrleVec::new();
+    /// let new_elements = vec![1, 1, 2, 2, 1, 1, 2, 2];
+    /// hrle = HrleVec::from_iter(hrle.to_vec().into_iter().chain(new_elements.into_iter()));
+    /// ```
+    ///
+    /// This reduces the number of hierarchal run-length encoding/decoding
+    /// operations.
     ///
     /// # Panics
     /// Panics if the number of elements in the vector overflows a usize.
