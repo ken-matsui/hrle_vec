@@ -2,18 +2,18 @@ use crate::{HrleVec, InternalRun, RunValue};
 
 pub(crate) fn encode<T: Clone + Eq>(v: &[T]) -> HrleVec<T> {
     let mut index = 0;
-    let mut result = Vec::new();
+    let mut runs = Vec::new();
 
     while index < v.len() {
         let best_run = find_best_run(v, index);
         index += best_run.len().get();
-        result.push(InternalRun {
+        runs.push(InternalRun {
             end: index - 1,
             value: best_run,
         });
     }
 
-    HrleVec { runs: result }
+    HrleVec { runs }
 }
 
 fn find_best_run<T: Clone + Eq>(v: &[T], start: usize) -> RunValue<T> {
