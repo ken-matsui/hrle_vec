@@ -31,7 +31,7 @@ impl<T> Index<usize> for HrleVec<T> {
         let run = &self.runs[ri];
         match &run.value {
             RunValue::One { value, .. } => value,
-            RunValue::Group { values, .. } if index < self.len() => {
+            RunValue::Repeat { values, .. } if index < self.len() => {
                 &values[(index - self.run_start(ri)) % values.len()]
             }
             _ => panic!(

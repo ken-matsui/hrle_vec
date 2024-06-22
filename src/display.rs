@@ -24,8 +24,8 @@ impl<T: Display> Display for RunValue<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         match self {
             RunValue::One { value, .. } => write!(f, "{}", value),
-            RunValue::Group { count, values, .. } => {
-                write!(f, "({}", count)?;
+            RunValue::Repeat { n, values, .. } => {
+                write!(f, "({}", n)?;
                 for value in values.internal_runs_iter() {
                     write!(f, "{}", value)?;
                 }

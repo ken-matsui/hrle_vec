@@ -97,8 +97,8 @@ impl<T: Eq + Clone> FromIterator<T> for HrleVec<T> {
 ///     iterator.next(),
 ///     Some(Run {
 ///         len: 6,
-///         value: RunValue::Group {
-///             count: 2,
+///         value: RunValue::Repeat {
+///             n: 2,
 ///             values: HrleVec::from(&[&1, &2, &3][..])
 ///         }
 ///     })

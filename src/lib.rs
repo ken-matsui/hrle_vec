@@ -29,8 +29,8 @@ pub struct HrleVec<T> {
 ///     iterator.next(),
 ///     Some(Run {
 ///         len: 6,
-///         value: RunValue::Group {
-///             count: 2,
+///         value: RunValue::Repeat {
+///             n: 2,
 ///             values: HrleVec::from(&[&1, &2, &3][..])
 ///         }
 ///     })
@@ -70,7 +70,7 @@ pub(crate) struct InternalRun<T> {
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub enum RunValue<T> {
     One { value: T },
-    Group { count: usize, values: HrleVec<T> },
+    Repeat { n: usize, values: HrleVec<T> },
 }
 
 impl<T> HrleVec<T> {
@@ -168,8 +168,8 @@ impl<T> HrleVec<T> {
     ///     iterator.next(),
     ///     Some(Run {
     ///         len: 6,
-    ///         value: RunValue::Group {
-    ///             count: 2,
+    ///         value: RunValue::Repeat {
+    ///             n: 2,
     ///             values: HrleVec::from(&[&1, &2, &3][..])
     ///         }
     ///     })
@@ -275,8 +275,8 @@ impl<T> HrleVec<T> {
     ///     hrle.last_run(),
     ///     Some(Run {
     ///         len: 4,
-    ///         value: RunValue::Group {
-    ///             count: 4,
+    ///         value: RunValue::Repeat {
+    ///             n: 4,
     ///             values: HrleVec::from(&[&1][..])
     ///         }
     ///     })
@@ -317,6 +317,9 @@ impl<T> HrleVec<T> {
     /// let hrle = HrleVec::from(&[10, 10, 40, 40, 30][..]);
     /// assert_eq!(hrle.last(), Some(&30));
     ///
+    /// let hrle = HrleVec::from(&[10, 10, 20, 30, 20, 30][..]);
+    /// assert_eq!(hrle.last(), Some(&30));
+    ///
     /// let hrle = HrleVec::<i32>::new();
     /// assert_eq!(hrle.last(), None);
     /// ```
@@ -327,7 +330,7 @@ impl<T> HrleVec<T> {
                 ..
             }) => Some(value),
             Some(InternalRun {
-                value: RunValue::Group { values, .. },
+                value: RunValue::Repeat { values, .. },
                 ..
             }) => values.last(),
             None => None,
@@ -504,7 +507,7 @@ impl<T> Run<T> {
     pub fn get_value(&self) -> Option<&T> {
         match &self.value {
             RunValue::One { value, .. } => Some(value),
-            RunValue::Group { values, .. } if values.runs_len() == 1 => {
+            RunValue::Repeat { values, .. } if values.runs_len() == 1 => {
                 values.get_run(0).and_then(|r| {
                     if let RunValue::One { value, .. } = r.value {
                         Some(value)
@@ -528,8 +531,8 @@ impl<T> RunValue<T> {
     pub fn len(&self) -> NonZeroUsize {
         match self {
             RunValue::One { .. } => unsafe { NonZeroUsize::new_unchecked(1) },
-            RunValue::Group { count, values, .. } => {
-                NonZeroUsize::new(count * values.runs_iter().map(|r| r.len).sum::<usize>()).unwrap()
+            RunValue::Repeat { n, values, .. } => {
+                NonZeroUsize::new(n * values.runs_iter().map(|r| r.len).sum::<usize>()).unwrap()
             }
         }
     }
@@ -537,8 +540,8 @@ impl<T> RunValue<T> {
     pub fn as_ref(&self) -> RunValue<&T> {
         match self {
             RunValue::One { value, .. } => RunValue::One { value },
-            RunValue::Group { count, values, .. } => RunValue::Group {
-                count: *count,
+            RunValue::Repeat { n, values, .. } => RunValue::Repeat {
+                n: *n,
                 values: values.as_ref(),
             },
         }

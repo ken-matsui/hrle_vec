@@ -20,19 +20,19 @@ fn find_best_run<T: Clone + Eq>(v: &[T], start: usize) -> RunValue<T> {
     while start + seq_length * 2 <= v.len() {
         if v[start..start + seq_length] == v[start + seq_length..start + 2 * seq_length] {
             // There are at least 2 repeats of the sequence.
-            let mut count = 2;
-            while start + seq_length * (count + 1) <= v.len()
+            let mut repeat = 2;
+            while start + seq_length * (repeat + 1) <= v.len()
                 && v[start..start + seq_length]
-                    == v[start + seq_length * count..start + seq_length * (count + 1)]
+                    == v[start + seq_length * repeat..start + seq_length * (repeat + 1)]
             {
                 // Count additional repeats of the sequence.
-                count += 1;
+                repeat += 1;
             }
 
             let repeated_seq = &v[start..start + seq_length];
             let encoded_seq = encode(repeated_seq);
-            return RunValue::Group {
-                count,
+            return RunValue::Repeat {
+                n: repeat,
                 values: encoded_seq,
             };
         }
