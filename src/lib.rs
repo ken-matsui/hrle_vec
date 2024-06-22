@@ -23,7 +23,7 @@ pub struct HrleVec<T> {
 /// # Examples
 ///
 /// ```
-/// # use hrle_vec::{HrleVec, Run, RunValue};
+/// # use hrle_vec::{HrleVec, Run};
 /// let hrle = HrleVec::from(&[1, 2, 3, 1, 2, 3, 3][..]);
 ///
 /// let mut iterator = hrle.runs_iter();
@@ -31,19 +31,14 @@ pub struct HrleVec<T> {
 ///     iterator.next(),
 ///     Some(Run {
 ///         len: 6,
-///         value: RunValue::Repeat {
-///             n: 2,
-///             values: vec![&1, &2, &3]
-///         }
+///         values: vec![&1, &2, &3],
 ///     })
 /// );
 /// assert_eq!(
 ///     iterator.next(),
 ///     Some(Run {
 ///         len: 1,
-///         value: RunValue::One {
-///             value: &3
-///         }
+///         values: vec![&3],
 ///     })
 /// );
 /// assert_eq!(iterator.next(), None);
@@ -52,8 +47,8 @@ pub struct HrleVec<T> {
 pub struct Run<T> {
     /// The length of this run.
     pub len: usize,
-    /// The value of this run.
-    pub value: RunValue<T>,
+    /// The values of this run.
+    pub values: Vec<T>,
 }
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
@@ -61,16 +56,10 @@ pub struct Run<T> {
 pub(crate) struct InternalRun<T> {
     /// The end index of this run.
     end: usize,
-    /// The value of this run.
-    value: RunValue<T>,
-}
-
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
-pub enum RunValue<T> {
-    One { value: T },
-    Repeat { n: usize, values: Vec<T> },
-    Unencoded { values: Vec<T> },
+    /// The number of times values are repeated.
+    repeat: usize,
+    /// The values of this run.
+    values: Vec<T>,
 }
 
 impl<T> HrleVec<T> {
@@ -156,7 +145,7 @@ impl<T> HrleVec<T> {
     /// # Examples
     ///
     /// ```
-    /// # use hrle_vec::{HrleVec, Run, RunValue};
+    /// # use hrle_vec::{HrleVec, Run};
     /// let hrle = HrleVec::from(&[1, 2, 3, 1, 2, 3, 3][..]);
     ///
     /// let mut iterator = hrle.runs_iter();
@@ -164,19 +153,14 @@ impl<T> HrleVec<T> {
     ///     iterator.next(),
     ///     Some(Run {
     ///         len: 6,
-    ///         value: RunValue::Repeat {
-    ///             n: 2,
-    ///             values: vec![&1, &2, &3]
-    ///         }
+    ///         values: vec![&1, &2, &3],
     ///     })
     /// );
     /// assert_eq!(
     ///     iterator.next(),
     ///     Some(Run {
     ///         len: 1,
-    ///         value: RunValue::One {
-    ///             value: &3
-    ///         }
+    ///         values: vec![&3],
     ///     })
     /// );
     /// assert_eq!(iterator.next(), None);
@@ -264,7 +248,7 @@ impl<T> HrleVec<T> {
     /// # Examples
     ///
     /// ```
-    /// # use hrle_vec::{HrleVec, Run, RunValue};
+    /// # use hrle_vec::{HrleVec, Run};
     /// let mut hrle = HrleVec::new();
     ///
     /// assert_eq!(hrle.last_run(), None);
@@ -279,10 +263,7 @@ impl<T> HrleVec<T> {
     ///     hrle.last_run(),
     ///     Some(Run {
     ///         len: 4,
-    ///         value: RunValue::Repeat {
-    ///             n: 4,
-    ///             values: vec![&1]
-    ///         }
+    ///         values: vec![&1],
     ///     })
     /// );
     ///
@@ -291,13 +272,12 @@ impl<T> HrleVec<T> {
     /// hrle.push_unencoded(3);
     /// hrle.encode();
     ///
+    /// assert_eq!(hrle, HrleVec::from(&[1, 1, 1, 1, 2, 2, 3][..]));
     /// assert_eq!(
     ///     hrle.last_run(),
     ///     Some(Run {
     ///         len: 1,
-    ///         value: RunValue::One {
-    ///             value: &3
-    ///         }
+    ///         values: vec![&3],
     ///     })
     /// );
     /// ```
@@ -310,7 +290,7 @@ impl<T> HrleVec<T> {
 
         self.runs.last().map(|run| Run {
             len: run.end + 1 - prev_end,
-            value: run.value.as_ref(),
+            values: run.values.iter().collect(),
         })
     }
 
@@ -331,18 +311,7 @@ impl<T> HrleVec<T> {
     /// ```
     pub fn last(&self) -> Option<&T> {
         match self.runs.last() {
-            Some(InternalRun {
-                value: RunValue::One { value, .. },
-                ..
-            }) => Some(value),
-            Some(InternalRun {
-                value: RunValue::Repeat { values, .. },
-                ..
-            }) => values.last(),
-            Some(InternalRun {
-                value: RunValue::Unencoded { values, .. },
-                ..
-            }) => values.last(),
+            Some(InternalRun { values, .. }) => values.last(),
             None => None,
         }
     }
@@ -413,7 +382,8 @@ impl<T> HrleVec<T> {
                 .iter()
                 .map(|run| InternalRun {
                     end: run.end,
-                    value: run.value.as_ref(),
+                    repeat: run.repeat,
+                    values: run.values.iter().collect(),
                 })
                 .collect(),
         }
@@ -424,16 +394,14 @@ impl<T> HrleVec<T> {
     /// # Examples
     ///
     /// ```
-    /// # use hrle_vec::{HrleVec, Run, RunValue};
+    /// # use hrle_vec::{HrleVec, Run};
     /// let hrle = HrleVec::from(&[1, 2, 3, 1, 2, 3, 3][..]);
     ///
     /// assert_eq!(
     ///     hrle.get_run(1),
     ///     Some(Run {
     ///         len: 1,
-    ///         value: RunValue::One {
-    ///             value: &3
-    ///         }
+    ///         values: vec![&3],
     ///     })
     /// );
     /// assert_eq!(hrle.get_run(2), None);
@@ -441,7 +409,7 @@ impl<T> HrleVec<T> {
     pub fn get_run(&self, run_index: usize) -> Option<Run<&T>> {
         self.runs.get(run_index).map(|internal_run| Run {
             len: internal_run.end + 1 - self.run_start(run_index),
-            value: internal_run.value.as_ref(),
+            values: internal_run.values.iter().collect(),
         })
     }
 }
@@ -501,24 +469,11 @@ impl<T: Clone> HrleVec<T> {
     /// assert_eq!(hrle[9], 1);
     /// ```
     pub fn push_n_unencoded(&mut self, count: usize, value: T) {
-        match &mut self.runs.last_mut() {
-            Some(InternalRun {
-                end,
-                value: RunValue::Unencoded { values },
-            }) => {
-                *end += count;
-                values.extend(repeat_n(value, count))
-            }
-            _ => {
-                let run = InternalRun {
-                    end: self.len() + count - 1,
-                    value: RunValue::Unencoded {
-                        values: vec![value; count],
-                    },
-                };
-                self.runs.push(run);
-            }
-        }
+        self.runs.push(InternalRun {
+            end: self.len() + count - 1,
+            repeat: 1,
+            values: vec![value; count],
+        });
     }
 }
 
@@ -680,51 +635,47 @@ impl<T: Eq + Clone> HrleVec<T> {
     }
 }
 
-impl<T> InternalRun<T> {
-    pub fn len(&self) -> NonZeroUsize {
-        self.value.len()
-    }
-}
-
-impl<T> RunValue<T> {
+#[allow(clippy::len_without_is_empty)]
+impl<T> Run<T> {
     /// Returns the length of the run value.
     ///
     /// # Examples
     ///
     /// ```
-    /// # use hrle_vec::HrleVec;
+    /// # use hrle_vec::{HrleVec, Run};
     /// let mut hrle = HrleVec::from(&[1, 2, 3, 2, 3][..]);
-    /// assert_eq!(hrle.get_run(0).unwrap().value.len().get(), 1);
-    /// assert_eq!(hrle.get_run(1).unwrap().value.len().get(), 4);
+    /// assert_eq!(hrle.get_run(0).unwrap().len(), 1);
+    /// assert_eq!(hrle.get_run(1).unwrap().len(), 4);
+    /// ```
+    pub fn len(&self) -> usize {
+        self.len
+    }
+}
+
+impl<T> InternalRun<T> {
+    /// Returns the length of the run value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use hrle_vec::{HrleVec, Run};
+    /// let mut hrle = HrleVec::from(&[1, 2, 3, 2, 3][..]);
+    /// //assert_eq!(hrle, HrleVec::from(&[1][..]));
+    /// assert_eq!(hrle.get_run(0), Some(Run { len: 1, values: vec![&1] }));
+    /// assert_eq!(hrle.get_run(1), Some(Run { len: 4, values: vec![&2, &3] }));
+    /// assert_eq!(hrle.get_run(0).unwrap().len(), 1);
+    /// assert_eq!(hrle.get_run(1).unwrap().len(), 4);
     ///
     /// for _ in 0..10 {
     ///     hrle.push_unencoded(2);
     ///     hrle.push_unencoded(3);
     /// }
-    /// assert_eq!(hrle.get_run(2).unwrap().value.len().get(), 20);
-    ///
     /// hrle.encode();
+    ///
     /// assert_eq!(hrle.runs_len(), 2);
-    /// assert_eq!(hrle.get_run(1).unwrap().value.len().get(), 24);
+    /// assert_eq!(hrle.get_run(1).unwrap().len(), 24);
     /// ```
     pub fn len(&self) -> NonZeroUsize {
-        match self {
-            RunValue::One { .. } => unsafe { NonZeroUsize::new_unchecked(1) },
-            RunValue::Repeat { n, values, .. } => NonZeroUsize::new(n * values.len()).unwrap(),
-            RunValue::Unencoded { values, .. } => NonZeroUsize::new(values.len()).unwrap(),
-        }
-    }
-
-    pub fn as_ref(&self) -> RunValue<&T> {
-        match self {
-            RunValue::One { value, .. } => RunValue::One { value },
-            RunValue::Repeat { n, values, .. } => RunValue::Repeat {
-                n: *n,
-                values: values.iter().collect(),
-            },
-            RunValue::Unencoded { values, .. } => RunValue::Unencoded {
-                values: values.iter().collect(),
-            },
-        }
+        NonZeroUsize::new(self.repeat * self.values.len()).unwrap()
     }
 }

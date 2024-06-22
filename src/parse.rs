@@ -1,22 +1,23 @@
-use crate::{HrleVec, InternalRun, RunValue};
+use crate::{HrleVec, InternalRun};
 
 pub(crate) fn encode<T: Clone + Eq>(v: &[T]) -> HrleVec<T> {
     let mut index = 0;
     let mut runs = Vec::new();
 
     while index < v.len() {
-        let best_run = find_best_run(v, index);
-        index += best_run.len().get();
+        let (repeat, best_run) = find_best_run(v, index);
+        index += repeat * best_run.len();
         runs.push(InternalRun {
             end: index - 1,
-            value: best_run,
+            repeat,
+            values: best_run,
         });
     }
 
     HrleVec { runs }
 }
 
-fn find_best_run<T: Clone + Eq>(v: &[T], start: usize) -> RunValue<T> {
+fn find_best_run<T: Clone + Eq>(v: &[T], start: usize) -> (usize, Vec<T>) {
     let mut seq_length = 1;
 
     while start + seq_length * 2 <= v.len() {
@@ -36,15 +37,10 @@ fn find_best_run<T: Clone + Eq>(v: &[T], start: usize) -> RunValue<T> {
         }
 
         let repeated_seq = &v[start..start + seq_length];
-        return RunValue::Repeat {
-            n: repeat,
-            values: repeated_seq.to_vec(),
-        };
+        return (repeat, repeated_seq.to_vec());
     }
 
-    RunValue::One {
-        value: v[start].clone(),
-    }
+    (1, vec![v[start].clone()])
 }
 
 #[cfg(test)]
@@ -61,25 +57,23 @@ mod tests {
                 runs: vec![
                     InternalRun {
                         end: 9,
-                        value: RunValue::Repeat {
-                            n: 2,
-                            values: vec!['A', 'B', 'C', 'B', 'C']
-                        }
+                        repeat: 2,
+                        values: vec!['A', 'B', 'C', 'B', 'C'],
                     },
                     InternalRun {
                         end: 10,
-                        value: RunValue::One { value: 'D' }
+                        repeat: 1,
+                        values: vec!['D'],
                     },
                     InternalRun {
                         end: 12,
-                        value: RunValue::Repeat {
-                            n: 2,
-                            values: vec!['E']
-                        }
+                        repeat: 2,
+                        values: vec!['E'],
                     },
                     InternalRun {
                         end: 13,
-                        value: RunValue::One { value: 'F' }
+                        repeat: 1,
+                        values: vec!['F'],
                     }
                 ]
             }
@@ -93,22 +87,23 @@ mod tests {
                 runs: vec![
                     InternalRun {
                         end: 8,
-                        value: RunValue::Repeat {
-                            n: 3,
-                            values: vec!['A', 'B', 'B']
-                        }
+                        repeat: 3,
+                        values: vec!['A', 'B', 'B'],
                     },
                     InternalRun {
                         end: 9,
-                        value: RunValue::One { value: 'A' }
+                        repeat: 1,
+                        values: vec!['A'],
                     },
                     InternalRun {
                         end: 10,
-                        value: RunValue::One { value: 'B' }
+                        repeat: 1,
+                        values: vec!['B'],
                     },
                     InternalRun {
                         end: 11,
-                        value: RunValue::One { value: 'A' }
+                        repeat: 1,
+                        values: vec!['A'],
                     }
                 ]
             }
@@ -122,17 +117,13 @@ mod tests {
                 runs: vec![
                     InternalRun {
                         end: 7,
-                        value: RunValue::Repeat {
-                            n: 2,
-                            values: vec!['A', 'B', 'C', 'D']
-                        }
+                        repeat: 2,
+                        values: vec!['A', 'B', 'C', 'D'],
                     },
                     InternalRun {
                         end: 13,
-                        value: RunValue::Repeat {
-                            n: 3,
-                            values: vec!['C', 'D']
-                        }
+                        repeat: 3,
+                        values: vec!['C', 'D'],
                     }
                 ]
             }
@@ -145,10 +136,8 @@ mod tests {
             HrleVec {
                 runs: vec![InternalRun {
                     end: 9,
-                    value: RunValue::Repeat {
-                        n: 5,
-                        values: vec!['A', 'B']
-                    }
+                    repeat: 5,
+                    values: vec!['A', 'B'],
                 }]
             }
         );

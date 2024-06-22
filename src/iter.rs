@@ -7,6 +7,7 @@ use crate::{HrleVec, Run};
 /// Can be obtained from the [`iter`](struct.HrleVec.html#method.iter).
 ///
 /// # Examples
+///
 /// ```
 /// # use hrle_vec::HrleVec;
 /// let hrle = HrleVec::from(&[1, 1, 1, 1, 2, 2, 3][..]);
@@ -88,8 +89,9 @@ impl<T: Eq + Clone> FromIterator<T> for HrleVec<T> {
 /// allocated in each iteration.
 ///
 /// # Examples
+///
 /// ```
-/// # use hrle_vec::{HrleVec, Run, RunValue};
+/// # use hrle_vec::{HrleVec, Run};
 /// let hrle = HrleVec::from(&[1, 2, 3, 1, 2, 3, 3][..]);
 ///
 /// let mut iterator = hrle.runs_iter();
@@ -97,19 +99,14 @@ impl<T: Eq + Clone> FromIterator<T> for HrleVec<T> {
 ///     iterator.next(),
 ///     Some(Run {
 ///         len: 6,
-///         value: RunValue::Repeat {
-///             n: 2,
-///             values: vec![&1, &2, &3]
-///         }
+///         values: vec![&1, &2, &3]
 ///     })
 /// );
 /// assert_eq!(
 ///     iterator.next(),
 ///     Some(Run {
 ///         len: 1,
-///         value: RunValue::One {
-///             value: &3
-///         }
+///         values: vec![&3],
 ///     })
 /// );
 /// assert_eq!(iterator.next(), None);
@@ -130,7 +127,7 @@ impl<'a, T: 'a> Iterator for Runs<'a, T> {
         self.run_index += 1;
         Some(Run {
             len: run.len().get(),
-            value: run.value.as_ref(),
+            values: run.values.iter().collect(),
         })
     }
 
