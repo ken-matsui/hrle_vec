@@ -148,10 +148,6 @@ impl<T> HrleVec<T> {
         self.runs.clear();
     }
 
-    pub(crate) fn internal_runs_iter(&self) -> std::slice::Iter<InternalRun<T>> {
-        self.runs.iter()
-    }
-
     /// Returns an iterator that can be used to iterate over the runs.
     ///
     /// # Examples
@@ -344,6 +340,20 @@ impl<T> HrleVec<T> {
     }
 
     /// Returns the index of the run containing the value with the given index.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let hrle = HrleVec::from(&[1, 1, 2, 3, 2, 3, 4][..]);
+    /// assert_eq!(hrle.run_index(0), 0);
+    /// assert_eq!(hrle.run_index(1), 0);
+    /// assert_eq!(hrle.run_index(2), 1);
+    /// assert_eq!(hrle.run_index(3), 1);
+    /// assert_eq!(hrle.run_index(4), 1);
+    /// assert_eq!(hrle.run_index(5), 1);
+    /// assert_eq!(hrle.run_index(6), 2);
+    /// ```
     pub fn run_index(&self, index: usize) -> usize {
         match self.runs.binary_search_by(|run| run.end.cmp(&index)) {
             Ok(ri) => ri,
@@ -357,6 +367,29 @@ impl<T> HrleVec<T> {
     }
 
     /// Returns the start index of the run with the given index.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let hrle = HrleVec::from(&[1, 1, 2, 3, 2, 3, 4][..]);
+    /// assert_eq!(hrle.runs_len(), 3);
+    /// assert_eq!(hrle.run_start(0), 0);
+    /// assert_eq!(hrle.run_start(1), 2);
+    /// assert_eq!(hrle.run_start(2), 6);
+    ///
+    /// // No more runs...
+    /// assert_eq!(hrle.run_start(3), 7);
+    /// ```
+    ///
+    /// You cannot get the start index of a run that does not exist.
+    ///
+    /// ```should_panic
+    /// # use hrle_vec::HrleVec;
+    /// # let hrle = HrleVec::from(&[1, 1, 2, 3, 2, 3, 4][..]);
+    /// assert_eq!(hrle.run_start(4), 7);
+    /// assert_eq!(hrle.run_start(usize::MAX), 7);
+    /// ```
     pub fn run_start(&self, run_index: usize) -> usize {
         let mut start = 0;
         for run in &self.runs[..run_index] {
@@ -616,6 +649,26 @@ impl<T> InternalRun<T> {
 }
 
 impl<T> RunValue<T> {
+    /// Returns the length of the run value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let mut hrle = HrleVec::from(&[1, 2, 3, 2, 3][..]);
+    /// assert_eq!(hrle.get_run(0).unwrap().value.len().get(), 1);
+    /// assert_eq!(hrle.get_run(1).unwrap().value.len().get(), 4);
+    ///
+    /// for _ in 0..10 {
+    ///     hrle.push_unencoded(2);
+    ///     hrle.push_unencoded(3);
+    /// }
+    /// assert_eq!(hrle.get_run(2).unwrap().value.len().get(), 20);
+    ///
+    /// hrle.encode();
+    /// assert_eq!(hrle.runs_len(), 2);
+    /// assert_eq!(hrle.get_run(1).unwrap().value.len().get(), 24);
+    /// ```
     pub fn len(&self) -> NonZeroUsize {
         match self {
             RunValue::One { .. } => unsafe { NonZeroUsize::new_unchecked(1) },
@@ -633,7 +686,9 @@ impl<T> RunValue<T> {
                 n: *n,
                 values: values.as_ref(),
             },
-            RunValue::Unencoded { .. } => unimplemented!("as_ref: unencoded"),
+            RunValue::Unencoded { values, .. } => RunValue::Unencoded {
+                values: values.iter().collect(),
+            },
         }
     }
 }

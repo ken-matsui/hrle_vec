@@ -26,7 +26,7 @@ impl<T: Display> Display for RunValue<T> {
             RunValue::One { value, .. } => write!(f, "{}", value),
             RunValue::Repeat { n, values, .. } => {
                 write!(f, "({}", n)?;
-                for value in values.internal_runs_iter() {
+                for value in values.runs.iter() {
                     write!(f, "{}", value)?;
                 }
                 write!(f, ")")
