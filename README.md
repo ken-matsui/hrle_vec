@@ -2,6 +2,11 @@
 
 A rust crate providing a vector like struct that stores data in hierarchal run-length encoding.
 
+```toml
+[dependencies]
+hrle_vec = "0.1"
+```
+
 ## Examples
 
 ```rust
