@@ -25,7 +25,7 @@ fn benchmark<'a, T: 'a, I: 'a>(c: &mut Criterion, name: &str, iter: &'a I, f: im
     });
     let mean = mean(&mem);
     println!(
-        "test {} ... memory allocated: {:.3} MiB (+/- {:.3})\n",
+        "test {} - Memory Allocated ... bench: {:.3} MiB (+/- {:.3})\n",
         name,
         mean,
         standard_deviation(&mem, Some(mean)),
