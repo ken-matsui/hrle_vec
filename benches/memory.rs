@@ -4,7 +4,7 @@ use std::iter::repeat;
 use criterion::{criterion_group, criterion_main, Criterion};
 use hrle_vec::HrleVec;
 use rle_vec::RleVec;
-use statistical::{mean, median, standard_deviation};
+use statistical::{mean, standard_deviation};
 
 #[global_allocator]
 static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
@@ -25,11 +25,10 @@ fn benchmark<'a, T: 'a, I: 'a>(c: &mut Criterion, name: &str, iter: &'a I, f: im
     });
     let mean = mean(&mem);
     println!(
-        "=> {}: Memory Allocated: {:.3} MiB +/- {:.3} ({:.3})\n",
+        "test {} ... memory allocated: {:.3} MiB (+/- {:.3})\n",
         name,
         mean,
         standard_deviation(&mem, Some(mean)),
-        median(&mem)
     );
 }
 
