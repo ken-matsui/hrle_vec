@@ -21,6 +21,12 @@ serde = {version = "1.0", features = ["derive"], optional = true}
 
 [dev-dependencies]
 criterion = {version = "0.4"}
+rle_vec = "0.4"
+statistical = "1.0"
+
+[target.'cfg(not(target_env = "msvc"))'.dev-dependencies]
+jemalloc-ctl = {version = "0.5", package = "tikv-jemalloc-ctl"}
+jemallocator = {version = "0.5", package = "tikv-jemallocator"}
 
 [lib]
 bench = false
@@ -28,3 +34,7 @@ bench = false
 [[bench]]
 harness = false
 name = "create"
+
+[[bench]]
+harness = false
+name = "memory"

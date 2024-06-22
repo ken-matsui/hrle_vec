@@ -94,6 +94,7 @@ impl<T> HrleVec<T> {
     /// that is going to be inserted.
     ///
     /// # Examples
+    ///
     /// ```
     /// # use hrle_vec::HrleVec;
     /// let mut hrle = HrleVec::<i32>::with_capacity(10);
@@ -120,6 +121,7 @@ impl<T> HrleVec<T> {
     /// Returns `true` if the [`HrleVec`] contains no elements.
     ///
     /// # Examples
+    ///
     /// ```
     /// # use hrle_vec::HrleVec;
     /// let mut hrle = HrleVec::new();
@@ -137,6 +139,7 @@ impl<T> HrleVec<T> {
     /// Note that this method has no effect on the allocated capacity of the vector.
     ///
     /// # Examples
+    ///
     /// ```
     /// # use hrle_vec::HrleVec;
     /// let mut hrle = HrleVec::from(&[1, 1, 1, 1, 2, 2, 3][..]);
