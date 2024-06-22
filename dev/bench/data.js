@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1719054219949,
+  "lastUpdate": 1719063544813,
   "repoUrl": "https://github.com/ken-matsui/hrle_vec",
   "entries": {
     "Benchmark": [
@@ -143,6 +143,54 @@ window.BENCHMARK_DATA = {
             "name": "Create 10_000 unique values from iter/Vec/",
             "value": 803,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "26405363+ken-matsui@users.noreply.github.com",
+            "name": "Ken Matsui",
+            "username": "ken-matsui"
+          },
+          "committer": {
+            "email": "26405363+ken-matsui@users.noreply.github.com",
+            "name": "Ken Matsui",
+            "username": "ken-matsui"
+          },
+          "distinct": true,
+          "id": "c8eb8fa55beb91c29c8ca77c0f4a80e4afab1ddc",
+          "message": "simplify structures",
+          "timestamp": "2024-06-22T06:37:34-07:00",
+          "tree_id": "f3093fd2666a9ae26bc201e69edaa1b125cdc835",
+          "url": "https://github.com/ken-matsui/hrle_vec/commit/c8eb8fa55beb91c29c8ca77c0f4a80e4afab1ddc"
+        },
+        "date": 1719063544509,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "Create 10_000 unique values from slice/Hrle/",
+            "value": 85277800,
+            "range": "± 153813",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Create 10_000 unique values from slice/Vec/",
+            "value": 829,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Create 10_000 unique values from iter/Hrle/",
+            "value": 85265440,
+            "range": "± 2356789",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "Create 10_000 unique values from iter/Vec/",
+            "value": 814,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
