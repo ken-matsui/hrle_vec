@@ -99,7 +99,7 @@ fn vec_repeat_long(c: &mut Criterion) {
 fn hrle_repeat_0_1_of_10_values(c: &mut Criterion) {
     let zeros = repeat(0).take(10);
     let ones = repeat(1).take(10);
-    let iter = repeat(zeros.chain(ones)).flat_map(|x| x).take(10_000);
+    let iter = repeat(zeros.chain(ones)).flatten().take(10_000);
     benchmark(c, "Hrle: Repeat 0 & 1 ten times each", &iter, |iter| {
         HrleVec::from_iter(iter.clone())
     });
@@ -108,7 +108,7 @@ fn hrle_repeat_0_1_of_10_values(c: &mut Criterion) {
 fn rle_repeat_0_1_of_10_values(c: &mut Criterion) {
     let zeros = repeat(0).take(10);
     let ones = repeat(1).take(10);
-    let iter = repeat(zeros.chain(ones)).flat_map(|x| x).take(10_000);
+    let iter = repeat(zeros.chain(ones)).flatten().take(10_000);
     benchmark(c, "Rle: Repeat 0 & 1 ten times each", &iter, |iter| {
         RleVec::from_iter(iter.clone())
     });
@@ -117,7 +117,7 @@ fn rle_repeat_0_1_of_10_values(c: &mut Criterion) {
 fn vec_repeat_0_1_of_10_values(c: &mut Criterion) {
     let zeros = repeat(0).take(10);
     let ones = repeat(1).take(10);
-    let iter = repeat(zeros.chain(ones)).flat_map(|x| x).take(10_000);
+    let iter = repeat(zeros.chain(ones)).flatten().take(10_000);
     benchmark(c, "Vec: Repeat 0 & 1 ten times each", &iter, |iter| {
         Vec::from_iter(iter.clone())
     });
