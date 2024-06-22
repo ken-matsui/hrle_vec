@@ -18,11 +18,11 @@ for _ in 0..10 {
     hrle.push_unencoded(1);
     hrle.push_unencoded(2);
 }
+assert_eq!(hrle.len(), 20);
 assert_eq!(hrle[18], 1);
 assert_eq!(hrle[19], 2);
 
 hrle.encode();
-assert_eq!(hrle.len(), 20);
 assert_eq!(hrle.runs_len(), 1);
 ```
 
