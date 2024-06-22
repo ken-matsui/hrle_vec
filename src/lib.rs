@@ -1,7 +1,6 @@
 #![doc = include_str!("../README.md")]
 #![deny(rustdoc::broken_intra_doc_links)]
 
-mod display;
 mod impls;
 mod iter;
 mod parse;
@@ -34,7 +33,7 @@ pub struct HrleVec<T> {
 ///         len: 6,
 ///         value: RunValue::Repeat {
 ///             n: 2,
-///             values: HrleVec::from(&[&1, &2, &3][..])
+///             values: vec![&1, &2, &3]
 ///         }
 ///     })
 /// );
@@ -61,9 +60,6 @@ pub struct Run<T> {
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub(crate) struct InternalRun<T> {
     /// The end index of this run.
-    ///
-    /// NOTE: This is correctly calculated only for the first depth of runs.
-    /// For runs inside groups, this value is not used.
     end: usize,
     /// The value of this run.
     value: RunValue<T>,
@@ -73,7 +69,7 @@ pub(crate) struct InternalRun<T> {
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub enum RunValue<T> {
     One { value: T },
-    Repeat { n: usize, values: HrleVec<T> },
+    Repeat { n: usize, values: Vec<T> },
     Unencoded { values: Vec<T> },
 }
 
@@ -167,7 +163,7 @@ impl<T> HrleVec<T> {
     ///         len: 6,
     ///         value: RunValue::Repeat {
     ///             n: 2,
-    ///             values: HrleVec::from(&[&1, &2, &3][..])
+    ///             values: vec![&1, &2, &3]
     ///         }
     ///     })
     /// );
@@ -282,7 +278,7 @@ impl<T> HrleVec<T> {
     ///         len: 4,
     ///         value: RunValue::Repeat {
     ///             n: 4,
-    ///             values: HrleVec::from(&[&1][..])
+    ///             values: vec![&1]
     ///         }
     ///     })
     /// );
@@ -681,41 +677,6 @@ impl<T: Eq + Clone> HrleVec<T> {
     }
 }
 
-impl<T> Run<T> {
-    /// Returns the value of the run, if it consists of a single value.
-    ///
-    /// # Note
-    ///
-    /// This method will return None for runs that contain multiple values.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use hrle_vec::HrleVec;
-    /// let hrle = HrleVec::from(&[1, 2, 2, 2, 3, 4, 3, 4][..]);
-    ///
-    /// assert_eq!(hrle.get_run(0).unwrap().get_value(), Some(&&1));
-    /// assert_eq!(hrle.get_run(1).unwrap().get_value(), Some(&&2));
-    /// assert_eq!(hrle.get_run(2).unwrap().get_value(), None, "contains 3 & 4");
-    /// assert_eq!(hrle.get_run(3), None);
-    /// ```
-    pub fn get_value(&self) -> Option<&T> {
-        match &self.value {
-            RunValue::One { value, .. } => Some(value),
-            RunValue::Repeat { values, .. } if values.runs_len() == 1 => {
-                values.get_run(0).and_then(|r| {
-                    if let RunValue::One { value, .. } = r.value {
-                        Some(value)
-                    } else {
-                        None
-                    }
-                })
-            }
-            _ => None,
-        }
-    }
-}
-
 impl<T> InternalRun<T> {
     pub fn len(&self) -> NonZeroUsize {
         self.value.len()
@@ -746,9 +707,7 @@ impl<T> RunValue<T> {
     pub fn len(&self) -> NonZeroUsize {
         match self {
             RunValue::One { .. } => unsafe { NonZeroUsize::new_unchecked(1) },
-            RunValue::Repeat { n, values, .. } => {
-                NonZeroUsize::new(n * values.runs_iter().map(|r| r.len).sum::<usize>()).unwrap()
-            }
+            RunValue::Repeat { n, values, .. } => NonZeroUsize::new(n * values.len()).unwrap(),
             RunValue::Unencoded { values, .. } => NonZeroUsize::new(values.len()).unwrap(),
         }
     }
@@ -758,7 +717,7 @@ impl<T> RunValue<T> {
             RunValue::One { value, .. } => RunValue::One { value },
             RunValue::Repeat { n, values, .. } => RunValue::Repeat {
                 n: *n,
-                values: values.as_ref(),
+                values: values.iter().collect(),
             },
             RunValue::Unencoded { values, .. } => RunValue::Unencoded {
                 values: values.iter().collect(),

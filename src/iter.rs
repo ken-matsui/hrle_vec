@@ -99,7 +99,7 @@ impl<T: Eq + Clone> FromIterator<T> for HrleVec<T> {
 ///         len: 6,
 ///         value: RunValue::Repeat {
 ///             n: 2,
-///             values: HrleVec::from(&[&1, &2, &3][..])
+///             values: vec![&1, &2, &3]
 ///         }
 ///     })
 /// );

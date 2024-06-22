@@ -75,25 +75,21 @@ mod tests {
     fn test_from_slice_into_vec() {
         let input = "ABCBCABCBCDEEF".chars().collect::<Vec<char>>();
         let encoded = HrleVec::from(&input[..]);
-        assert_eq!(format!("{}", encoded), "(2A(2BC))D(2E)F");
         let decoded: Vec<char> = encoded.into();
         assert_eq!(input, decoded);
 
         let input = "ABBABBABBABA".chars().collect::<Vec<char>>();
         let encoded = HrleVec::from(&input[..]);
-        assert_eq!(format!("{}", encoded), "(3A(2B))ABA");
         let decoded: Vec<char> = encoded.into();
         assert_eq!(input, decoded);
 
         let input = "ABCDABCDCDCDCD".chars().collect::<Vec<char>>();
         let encoded = HrleVec::from(&input[..]);
-        assert_eq!(format!("{}", encoded), "(2ABCD)(3CD)");
         let decoded: Vec<char> = encoded.into();
         assert_eq!(input, decoded);
 
         let input = "ABABABABAB".chars().collect::<Vec<char>>();
         let encoded = HrleVec::from(&input[..]);
-        assert_eq!(format!("{}", encoded), "(5AB)");
         let decoded: Vec<char> = encoded.into();
         assert_eq!(input, decoded);
     }
