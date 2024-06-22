@@ -443,13 +443,7 @@ impl<T: Eq + Clone> HrleVec<T> {
         if count == 0 {
             return;
         }
-
-        let vec = self
-            .to_vec()
-            .into_iter()
-            .chain(repeat_n(value, count))
-            .collect::<Vec<T>>();
-        *self = HrleVec::from(&vec[..]);
+        *self = HrleVec::from_iter(self.to_vec().into_iter().chain(repeat_n(value, count)))
     }
 }
 
