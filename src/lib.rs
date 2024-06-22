@@ -3,7 +3,7 @@ mod impls;
 mod iter;
 mod parse;
 
-use std::num::NonZeroUsize;
+use std::{num::NonZeroUsize, slice::SliceIndex};
 
 use itertools::repeat_n;
 
@@ -613,6 +613,43 @@ impl<T: Eq + Clone> HrleVec<T> {
     pub fn set(&mut self, index: usize, value: T) {
         let mut vec = self.to_vec();
         vec[index] = value;
+        *self = HrleVec::from_iter(vec);
+    }
+
+    /// Modify the value at given range.
+    ///
+    /// # Note
+    ///
+    /// This method is expensive because it creates a new `HrleVec` from scratch
+    /// every call.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let mut hrle = HrleVec::from(&[1, 2, 2, 1][..]);
+    ///
+    /// assert_eq!(hrle[1], 2);
+    /// assert_eq!(hrle[2], 2);
+    /// assert_eq!(hrle.len(), 4);
+    /// assert_eq!(hrle.runs_len(), 3);
+    ///
+    /// hrle.set_range(1..=2, 1);
+    /// assert_eq!(hrle[1], 1);
+    /// assert_eq!(hrle[2], 1);
+    /// assert_eq!(hrle.len(), 4);
+    /// assert_eq!(hrle.runs_len(), 1);
+    /// ```
+    pub fn set_range<I>(&mut self, index: I, value: T)
+    where
+        I: SliceIndex<[T], Output = [T]>,
+    {
+        let mut vec = self.to_vec();
+        if let Some(slice) = vec.get_mut(index) {
+            for elem in slice.iter_mut() {
+                *elem = value.clone();
+            }
+        }
         *self = HrleVec::from_iter(vec);
     }
 
