@@ -57,7 +57,12 @@ pub struct Run<T> {
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub(crate) struct InternalRun<T> {
+    /// The end index of this run.
+    ///
+    /// NOTE: This is correctly calculated only for the first depth of runs.
+    /// For runs inside groups, this value is not used.
     end: usize,
+    /// The value of this run.
     value: RunValue<T>,
 }
 
