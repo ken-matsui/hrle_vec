@@ -493,7 +493,7 @@ impl<T> Run<T> {
     ///
     /// # Example
     /// ```
-    /// # use hrle_vec::{HrleVec, Run, RunValue};
+    /// # use hrle_vec::HrleVec;
     /// let hrle = HrleVec::from(&[1, 2, 2, 2, 3, 4, 3, 4][..]);
     ///
     /// assert_eq!(hrle.get_run(0).unwrap().get_value(), Some(&&1));
