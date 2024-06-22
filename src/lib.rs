@@ -1,4 +1,5 @@
 #![doc = include_str!("../README.md")]
+#![deny(rustdoc::broken_intra_doc_links)]
 
 mod display;
 mod impls;
@@ -18,7 +19,7 @@ pub struct HrleVec<T> {
     runs: Vec<InternalRun<T>>,
 }
 
-/// Represent a run inside the `HrleVec`, can be obtained from the [`runs`](struct.HrleVec.html#method.runs). A run is a serie of the same value.
+/// Represent a run inside the [`HrleVec`], can be obtained from the [`runs`](struct.HrleVec.html#method.runs). A run is a serie of the same value.
 ///
 /// # Examples
 ///
@@ -77,9 +78,9 @@ pub enum RunValue<T> {
 }
 
 impl<T> HrleVec<T> {
-    /// Constructs a new empty `HrleVec<T>`.
+    /// Constructs a new empty [`HrleVec`].
     ///
-    /// The hrle_vector will not allocate until elements are pushed onto it.
+    /// The [`HrleVec`] will not allocate until elements are pushed onto it.
     ///
     /// # Examples
     ///
@@ -91,16 +92,17 @@ impl<T> HrleVec<T> {
         Self { runs: Vec::new() }
     }
 
-    /// Constructs a new empty `HrleVec<T>` with capacity for the number of runs.
+    /// Constructs a new empty [`HrleVec`] with capacity for the number of runs.
     ///
-    /// Choosing this value requires knowledge about the composition of the data that is going to be inserted.
+    /// Choosing this value requires knowledge about the composition of the data
+    /// that is going to be inserted.
     ///
     /// # Examples
     /// ```
     /// # use hrle_vec::HrleVec;
     /// let mut hrle = HrleVec::<i32>::with_capacity(10);
     ///
-    /// // The hrle_vector contains no items, even though it has capacity for more
+    /// // The [`HrleVec`] contains no items, even though it has capacity for more
     /// assert_eq!(hrle.len(), 0);
     ///
     /// // These are all done without reallocating...
@@ -109,7 +111,7 @@ impl<T> HrleVec<T> {
     /// }
     /// hrle.encode();
     ///
-    /// // The hrle_vector contains 10 runs and 10 elements too.
+    /// // The [`HrleVec`] contains 10 runs and 10 elements too.
     /// assert_eq!(hrle.len(), 10);
     /// assert_eq!(hrle.runs_len(), 10);
     /// ```
@@ -119,7 +121,7 @@ impl<T> HrleVec<T> {
         }
     }
 
-    /// Returns `true` if the hrle_vector contains no elements.
+    /// Returns `true` if the [`HrleVec`] contains no elements.
     ///
     /// # Examples
     /// ```
@@ -187,9 +189,10 @@ impl<T> HrleVec<T> {
         }
     }
 
-    /// Returns an iterator over values. Comparable to a `Vec` iterator.
+    /// Returns an iterator over values.  Comparable to a `Vec` iterator.
     ///
     /// # Examples
+    ///
     /// ```
     /// # use hrle_vec::HrleVec;
     /// let mut hrle = HrleVec::new();
@@ -217,6 +220,7 @@ impl<T> HrleVec<T> {
     /// Returns the number of runs
     ///
     /// # Examples
+    ///
     /// ```
     /// # use hrle_vec::HrleVec;
     /// let mut hrle = HrleVec::new();
@@ -236,9 +240,10 @@ impl<T> HrleVec<T> {
         self.runs.len()
     }
 
-    /// Returns the number of elements in the hrle_vector.
+    /// Returns the number of elements in the [`HrleVec`].
     ///
     /// # Examples
+    ///
     /// ```
     /// # use hrle_vec::HrleVec;
     /// let mut hrle = HrleVec::new();
@@ -258,6 +263,7 @@ impl<T> HrleVec<T> {
     /// Returns the last run, or None if it is empty.
     ///
     /// # Examples
+    ///
     /// ```
     /// # use hrle_vec::{HrleVec, Run, RunValue};
     /// let mut hrle = HrleVec::new();
@@ -312,6 +318,7 @@ impl<T> HrleVec<T> {
     /// Returns the last value, or None if it is empty.
     ///
     /// # Examples
+    ///
     /// ```
     /// # use hrle_vec::HrleVec;
     /// let hrle = HrleVec::from(&[10, 10, 40, 40, 30][..]);
@@ -517,7 +524,7 @@ impl<T: Clone> HrleVec<T> {
 }
 
 impl<T: Eq + Clone> HrleVec<T> {
-    /// Appends an element to the back of this hrle_vector.
+    /// Appends an element to the back of this [`HrleVec`].
     ///
     /// # Note
     ///
