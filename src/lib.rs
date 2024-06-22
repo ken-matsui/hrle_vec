@@ -588,6 +588,35 @@ impl<T: Eq + Clone> HrleVec<T> {
         *self = HrleVec::from_iter(self.to_vec().into_iter().chain(repeat_n(value, count)))
     }
 
+    /// Modify the value at given index.
+    ///
+    /// # Note
+    ///
+    /// This method is expensive because it creates a new `HrleVec` from scratch
+    /// every call.  If you need to push many elements, it is better to use
+    /// `set_unencoded`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use hrle_vec::HrleVec;
+    /// let mut hrle = HrleVec::from(&[1, 2, 1, 1][..]);
+    ///
+    /// assert_eq!(hrle[3], 1);
+    /// assert_eq!(hrle.len(), 4);
+    /// assert_eq!(hrle.runs_len(), 3);
+    ///
+    /// hrle.set(3, 2);
+    /// assert_eq!(hrle[3], 2);
+    /// assert_eq!(hrle.len(), 4);
+    /// assert_eq!(hrle.runs_len(), 1);
+    /// ```
+    pub fn set(&mut self, index: usize, value: T) {
+        let mut vec = self.to_vec();
+        vec[index] = value;
+        *self = HrleVec::from_iter(vec);
+    }
+
     /// Encodes the hrle_vec.
     ///
     /// This is useful if you have a hrle_vec that has been modified by pushing
