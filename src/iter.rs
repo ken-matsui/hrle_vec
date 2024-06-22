@@ -98,6 +98,7 @@ impl<T: Eq + Clone> FromIterator<T> for HrleVec<T> {
 /// assert_eq!(
 ///     iterator.next(),
 ///     Some(Run {
+///         start: 0,
 ///         len: 6,
 ///         values: vec![&1, &2, &3]
 ///     })
@@ -105,6 +106,7 @@ impl<T: Eq + Clone> FromIterator<T> for HrleVec<T> {
 /// assert_eq!(
 ///     iterator.next(),
 ///     Some(Run {
+///         start: 6,
 ///         len: 1,
 ///         values: vec![&3],
 ///     })
@@ -124,8 +126,10 @@ impl<'a, T: 'a> Iterator for Runs<'a, T> {
             return None;
         }
         let run = &self.hrle.runs[self.run_index];
+        let start = self.hrle.run_start(self.run_index);
         self.run_index += 1;
         Some(Run {
+            start,
             len: run.len().get(),
             values: run.values.iter().collect(),
         })

@@ -30,6 +30,7 @@ pub struct HrleVec<T> {
 /// assert_eq!(
 ///     iterator.next(),
 ///     Some(Run {
+///         start: 0,
 ///         len: 6,
 ///         values: vec![&1, &2, &3],
 ///     })
@@ -37,6 +38,7 @@ pub struct HrleVec<T> {
 /// assert_eq!(
 ///     iterator.next(),
 ///     Some(Run {
+///         start: 6,
 ///         len: 1,
 ///         values: vec![&3],
 ///     })
@@ -45,6 +47,8 @@ pub struct HrleVec<T> {
 /// ```
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct Run<T> {
+    /// The start index of this run.
+    pub start: usize,
     /// The length of this run.
     pub len: usize,
     /// The values of this run.
@@ -152,6 +156,7 @@ impl<T> HrleVec<T> {
     /// assert_eq!(
     ///     iterator.next(),
     ///     Some(Run {
+    ///         start: 0,
     ///         len: 6,
     ///         values: vec![&1, &2, &3],
     ///     })
@@ -159,6 +164,7 @@ impl<T> HrleVec<T> {
     /// assert_eq!(
     ///     iterator.next(),
     ///     Some(Run {
+    ///         start: 6,
     ///         len: 1,
     ///         values: vec![&3],
     ///     })
@@ -262,6 +268,7 @@ impl<T> HrleVec<T> {
     /// assert_eq!(
     ///     hrle.last_run(),
     ///     Some(Run {
+    ///         start: 0,
     ///         len: 4,
     ///         values: vec![&1],
     ///     })
@@ -276,6 +283,7 @@ impl<T> HrleVec<T> {
     /// assert_eq!(
     ///     hrle.last_run(),
     ///     Some(Run {
+    ///         start: 6,
     ///         len: 1,
     ///         values: vec![&3],
     ///     })
@@ -289,6 +297,7 @@ impl<T> HrleVec<T> {
         };
 
         self.runs.last().map(|run| Run {
+            start: prev_end,
             len: run.end + 1 - prev_end,
             values: run.values.iter().collect(),
         })
@@ -400,6 +409,7 @@ impl<T> HrleVec<T> {
     /// assert_eq!(
     ///     hrle.get_run(1),
     ///     Some(Run {
+    ///         start: 6,
     ///         len: 1,
     ///         values: vec![&3],
     ///     })
@@ -407,9 +417,13 @@ impl<T> HrleVec<T> {
     /// assert_eq!(hrle.get_run(2), None);
     /// ```
     pub fn get_run(&self, run_index: usize) -> Option<Run<&T>> {
-        self.runs.get(run_index).map(|internal_run| Run {
-            len: internal_run.end + 1 - self.run_start(run_index),
-            values: internal_run.values.iter().collect(),
+        self.runs.get(run_index).map(|internal_run| {
+            let start = self.run_start(run_index);
+            Run {
+                start,
+                len: internal_run.end + 1 - start,
+                values: internal_run.values.iter().collect(),
+            }
         })
     }
 }
@@ -660,9 +674,22 @@ impl<T> InternalRun<T> {
     /// ```
     /// # use hrle_vec::{HrleVec, Run};
     /// let mut hrle = HrleVec::from(&[1, 2, 3, 2, 3][..]);
-    /// //assert_eq!(hrle, HrleVec::from(&[1][..]));
-    /// assert_eq!(hrle.get_run(0), Some(Run { len: 1, values: vec![&1] }));
-    /// assert_eq!(hrle.get_run(1), Some(Run { len: 4, values: vec![&2, &3] }));
+    /// assert_eq!(
+    ///     hrle.get_run(0),
+    ///     Some(Run {
+    ///         start: 0,
+    ///         len: 1,
+    ///         values: vec![&1]
+    ///     })
+    /// );
+    /// assert_eq!(
+    ///     hrle.get_run(1),
+    ///     Some(Run {
+    ///         start: 1,
+    ///         len: 4,
+    ///         values: vec![&2, &3]
+    ///     })
+    /// );
     /// assert_eq!(hrle.get_run(0).unwrap().len(), 1);
     /// assert_eq!(hrle.get_run(1).unwrap().len(), 4);
     ///
