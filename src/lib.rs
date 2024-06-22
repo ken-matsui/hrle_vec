@@ -477,8 +477,6 @@ impl<T: Eq + Clone> HrleVec<T> {
     }
 }
 
-// TODO: set_range, set_hint
-
 impl<T> InternalRun<T> {
     pub fn len(&self) -> NonZeroUsize {
         self.value.len()
