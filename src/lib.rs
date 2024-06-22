@@ -527,7 +527,7 @@ impl<T: Eq + Clone> HrleVec<T> {
     /// # use hrle_vec::HrleVec;
     /// let mut hrle = HrleVec::new();
     /// let new_elements = vec![1, 1, 2, 2, 1, 1, 2, 2];
-    /// hrle = HrleVec::from_iter(hrle.to_vec().into_iter().chain(new_elements.into_iter()));
+    /// hrle = HrleVec::from_iter(hrle.to_vec().into_iter().chain(new_elements));
     /// ```
     ///
     /// This reduces the number of hierarchal run-length encoding/decoding
@@ -561,7 +561,7 @@ impl<T: Eq + Clone> HrleVec<T> {
     /// # use hrle_vec::HrleVec;
     /// let mut hrle = HrleVec::new();
     /// let new_elements = vec![1, 1, 2, 2, 1, 1, 2, 2];
-    /// hrle = HrleVec::from_iter(hrle.to_vec().into_iter().chain(new_elements.into_iter()));
+    /// hrle = HrleVec::from_iter(hrle.to_vec().into_iter().chain(new_elements));
     /// ```
     ///
     /// This reduces the number of hierarchal run-length encoding/decoding
