@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1719200433283,
+  "lastUpdate": 1719201265125,
   "repoUrl": "https://github.com/ken-matsui/hrle_vec",
   "entries": {
     "Memory Benchmark": [
@@ -840,6 +840,174 @@ window.BENCHMARK_DATA = {
             "value": 83885779,
             "unit": "KiB",
             "range": "54019"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "26405363+ken-matsui@users.noreply.github.com",
+            "name": "Ken Matsui",
+            "username": "ken-matsui"
+          },
+          "committer": {
+            "email": "26405363+ken-matsui@users.noreply.github.com",
+            "name": "Ken Matsui",
+            "username": "ken-matsui"
+          },
+          "distinct": true,
+          "id": "dbe2005a69a2e7f5c1033877a55d2721fd956353",
+          "message": "optimize for all_unique & all_equal cases",
+          "timestamp": "2024-06-23T20:46:48-07:00",
+          "tree_id": "c77a9d51c899494b9aef2d8fe0d7894fdace19b8",
+          "url": "https://github.com/ken-matsui/hrle_vec/commit/dbe2005a69a2e7f5c1033877a55d2721fd956353"
+        },
+        "date": 1719201264784,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Hrle: create 10,000 unique values from slice - Memory Allocated",
+            "value": 550843944,
+            "unit": "KiB",
+            "range": "1352822"
+          },
+          {
+            "name": "Rle: create 10,000 unique values from slice - Memory Allocated",
+            "value": 269777128,
+            "unit": "KiB",
+            "range": "24301900"
+          },
+          {
+            "name": "Vec: create 10,000 unique values from slice - Memory Allocated",
+            "value": 41942658,
+            "unit": "KiB",
+            "range": "59671"
+          },
+          {
+            "name": "Hrle: create 10,000 unique values from iter - Memory Allocated",
+            "value": 550863686,
+            "unit": "KiB",
+            "range": "332284"
+          },
+          {
+            "name": "Rle: create 10,000 unique values from iter - Memory Allocated",
+            "value": 268619424,
+            "unit": "KiB",
+            "range": "9593058"
+          },
+          {
+            "name": "Vec: create 10,000 unique values from iter - Memory Allocated",
+            "value": 41942934,
+            "unit": "KiB",
+            "range": "16162"
+          },
+          {
+            "name": "Hrle: create 10,000 equal values from slice - Memory Allocated",
+            "value": 84,
+            "unit": "KiB",
+            "range": "15013"
+          },
+          {
+            "name": "Rle: create 10,000 equal values from slice - Memory Allocated",
+            "value": 214,
+            "unit": "KiB",
+            "range": "59495"
+          },
+          {
+            "name": "Vec: create 10,000 equal values from slice - Memory Allocated",
+            "value": 41942996,
+            "unit": "KiB",
+            "range": "7176"
+          },
+          {
+            "name": "Hrle: create 10,000 equal values from iter - Memory Allocated",
+            "value": 247,
+            "unit": "KiB",
+            "range": "30414"
+          },
+          {
+            "name": "Rle: create 10,000 equal values from iter - Memory Allocated",
+            "value": 168,
+            "unit": "KiB",
+            "range": "27867"
+          },
+          {
+            "name": "Vec: create 10,000 equal values from iter - Memory Allocated",
+            "value": 41942624,
+            "unit": "KiB",
+            "range": "95480"
+          },
+          {
+            "name": "Hrle: create 1,000 runs of 10 values from slice - Memory Allocated",
+            "value": 49315700,
+            "unit": "KiB",
+            "range": "87310"
+          },
+          {
+            "name": "Rle: create 1,000 runs of 10 values from slice - Memory Allocated",
+            "value": 1248,
+            "unit": "KiB",
+            "range": "133112"
+          },
+          {
+            "name": "Vec: create 1,000 runs of 10 values from slice - Memory Allocated",
+            "value": 41942728,
+            "unit": "KiB",
+            "range": "56489"
+          },
+          {
+            "name": "Hrle: create 1,000 runs of 10 values from iter - Memory Allocated",
+            "value": 49315874,
+            "unit": "KiB",
+            "range": "116165"
+          },
+          {
+            "name": "Rle: create 1,000 runs of 10 values from iter - Memory Allocated",
+            "value": 2422,
+            "unit": "KiB",
+            "range": "202176"
+          },
+          {
+            "name": "Vec: create 1,000 runs of 10 values from iter - Memory Allocated",
+            "value": 41942125,
+            "unit": "KiB",
+            "range": "189197"
+          },
+          {
+            "name": "Hrle: create 5,000 runs of 2 alternating values from slice - Memory Allocated",
+            "value": 173,
+            "unit": "KiB",
+            "range": "27510"
+          },
+          {
+            "name": "Rle: create 5,000 runs of 2 alternating values from slice - Memory Allocated",
+            "value": 269099754,
+            "unit": "KiB",
+            "range": "19784745"
+          },
+          {
+            "name": "Vec: create 5,000 runs of 2 alternating values from slice - Memory Allocated",
+            "value": 83885611,
+            "unit": "KiB",
+            "range": "96598"
+          },
+          {
+            "name": "Hrle: create 5,000 runs of 2 alternating values from iter - Memory Allocated",
+            "value": 786,
+            "unit": "KiB",
+            "range": "82031"
+          },
+          {
+            "name": "Rle: create 5,000 runs of 2 alternating values from iter - Memory Allocated",
+            "value": 268821332,
+            "unit": "KiB",
+            "range": "9463825"
+          },
+          {
+            "name": "Vec: create 5,000 runs of 2 alternating values from iter - Memory Allocated",
+            "value": 83885078,
+            "unit": "KiB",
+            "range": "212818"
           }
         ]
       }
