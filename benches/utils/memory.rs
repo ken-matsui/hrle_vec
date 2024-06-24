@@ -19,8 +19,8 @@ struct BenchmarkResult {
 }
 
 fn save_results(name: &str, mem: &[f64]) {
-    let mean = mean(&mem);
-    let std_dev = standard_deviation(&mem, Some(mean)) as u64;
+    let mean = mean(mem);
+    let std_dev = standard_deviation(mem, Some(mean)) as u64;
     let mean = mean as u64;
     println!("=> {name} ... memory allocated: {mean:>11} KiB (+/- {std_dev})\n");
 
