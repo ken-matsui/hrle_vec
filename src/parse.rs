@@ -31,7 +31,7 @@ pub(crate) fn encode<T: Clone + Eq + Hash>(v: &[T]) -> HrleVec<T> {
         };
     }
 
-    // Case 3: Time Complexity: TODO:
+    // Case 3: Time Complexity: O(n^2)
     let mut index = 0;
     let mut runs = Vec::new();
 
@@ -51,6 +51,7 @@ pub(crate) fn encode<T: Clone + Eq + Hash>(v: &[T]) -> HrleVec<T> {
 fn find_best_run<T: Clone + Eq>(v: &[T], start: usize) -> (usize, Vec<T>) {
     let mut seq_length = 1;
 
+    // Time Complexity: O(n/2) => O(n)
     while start + seq_length * 2 <= v.len() {
         if v[start..start + seq_length] != v[start + seq_length..start + 2 * seq_length] {
             seq_length += 1;
@@ -80,6 +81,44 @@ mod tests {
 
     #[test]
     fn test_encode() {
+        let input = vec![0; 10_000];
+        let encoded = encode(&input);
+        assert_eq!(
+            encoded,
+            HrleVec {
+                runs: vec![InternalRun {
+                    end: 9999,
+                    repeat: 10_000,
+                    values: vec![0],
+                }]
+            }
+        );
+
+        let input = Vec::from_iter(0..3);
+        let encoded = encode(&input);
+        assert_eq!(
+            encoded,
+            HrleVec {
+                runs: vec![
+                    InternalRun {
+                        end: 0,
+                        repeat: 1,
+                        values: vec![0],
+                    },
+                    InternalRun {
+                        end: 1,
+                        repeat: 1,
+                        values: vec![1],
+                    },
+                    InternalRun {
+                        end: 2,
+                        repeat: 1,
+                        values: vec![2],
+                    },
+                ]
+            }
+        );
+
         let input = "ABCBCABCBCDEEF".chars().collect::<Vec<char>>();
         let encoded = encode(&input);
         assert_eq!(
