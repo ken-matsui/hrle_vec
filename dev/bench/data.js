@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1719193482709,
+  "lastUpdate": 1719195326811,
   "repoUrl": "https://github.com/ken-matsui/hrle_vec",
   "entries": {
     "Memory Benchmark": [
@@ -912,6 +912,174 @@ window.BENCHMARK_DATA = {
             "value": 41942937,
             "unit": "KiB",
             "range": "16519"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "26405363+ken-matsui@users.noreply.github.com",
+            "name": "Ken Matsui",
+            "username": "ken-matsui"
+          },
+          "committer": {
+            "email": "26405363+ken-matsui@users.noreply.github.com",
+            "name": "Ken Matsui",
+            "username": "ken-matsui"
+          },
+          "distinct": true,
+          "id": "b47757a78afd51831b9cb565af9a442b76ade770",
+          "message": "organize benches",
+          "timestamp": "2024-06-23T19:09:44-07:00",
+          "tree_id": "b97baff92693269deff23872cc115323910fd35a",
+          "url": "https://github.com/ken-matsui/hrle_vec/commit/b47757a78afd51831b9cb565af9a442b76ade770"
+        },
+        "date": 1719195325943,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Hrle: 10,000 unique values from slice - Memory Allocated",
+            "value": 749444567,
+            "unit": "KiB",
+            "range": "21029714"
+          },
+          {
+            "name": "Rle: 10,000 unique values from slice - Memory Allocated",
+            "value": 269736648,
+            "unit": "KiB",
+            "range": "23316296"
+          },
+          {
+            "name": "Vec: 10,000 unique values from slice - Memory Allocated",
+            "value": 41942813,
+            "unit": "KiB",
+            "range": "48446"
+          },
+          {
+            "name": "Hrle: 10,000 unique values from iter - Memory Allocated",
+            "value": 752236330,
+            "unit": "KiB",
+            "range": "3009760"
+          },
+          {
+            "name": "Rle: 10,000 unique values from iter - Memory Allocated",
+            "value": 268845494,
+            "unit": "KiB",
+            "range": "9210224"
+          },
+          {
+            "name": "Vec: 10,000 unique values from iter - Memory Allocated",
+            "value": 41942702,
+            "unit": "KiB",
+            "range": "92088"
+          },
+          {
+            "name": "Hrle: 10,000 equal values from slice - Memory Allocated",
+            "value": 363,
+            "unit": "KiB",
+            "range": "47274"
+          },
+          {
+            "name": "Rle: 10,000 equal values from slice - Memory Allocated",
+            "value": 44,
+            "unit": "KiB",
+            "range": "10351"
+          },
+          {
+            "name": "Vec: 10,000 equal values from slice - Memory Allocated",
+            "value": 41942850,
+            "unit": "KiB",
+            "range": "46679"
+          },
+          {
+            "name": "Hrle: 10,000 equal values from iter - Memory Allocated",
+            "value": 386,
+            "unit": "KiB",
+            "range": "39247"
+          },
+          {
+            "name": "Rle: 10,000 equal values from iter - Memory Allocated",
+            "value": 58,
+            "unit": "KiB",
+            "range": "13143"
+          },
+          {
+            "name": "Vec: 10,000 equal values from iter - Memory Allocated",
+            "value": 41942913,
+            "unit": "KiB",
+            "range": "25516"
+          },
+          {
+            "name": "Hrle: 1,000 runs of 10 values from slice - Memory Allocated",
+            "value": 49315411,
+            "unit": "KiB",
+            "range": "64062"
+          },
+          {
+            "name": "Rle: 1,000 runs of 10 values from slice - Memory Allocated",
+            "value": 1115,
+            "unit": "KiB",
+            "range": "124597"
+          },
+          {
+            "name": "Vec: 1,000 runs of 10 values from slice - Memory Allocated",
+            "value": 41942983,
+            "unit": "KiB",
+            "range": "9069"
+          },
+          {
+            "name": "Hrle: 1,000 runs of 10 values from iter - Memory Allocated",
+            "value": 49315390,
+            "unit": "KiB",
+            "range": "179442"
+          },
+          {
+            "name": "Rle: 1,000 runs of 10 values from iter - Memory Allocated",
+            "value": 1878,
+            "unit": "KiB",
+            "range": "160121"
+          },
+          {
+            "name": "Vec: 1,000 runs of 10 values from iter - Memory Allocated",
+            "value": 41943025,
+            "unit": "KiB",
+            "range": "62394"
+          },
+          {
+            "name": "Hrle: 1,000 runs of 10 alternating values from slice - Memory Allocated",
+            "value": 259,
+            "unit": "KiB",
+            "range": "41574"
+          },
+          {
+            "name": "Rle: 1,000 runs of 10 alternating values from slice - Memory Allocated",
+            "value": 268545497,
+            "unit": "KiB",
+            "range": "4300172"
+          },
+          {
+            "name": "Vec: 1,000 runs of 10 alternating values from slice - Memory Allocated",
+            "value": 83885728,
+            "unit": "KiB",
+            "range": "56029"
+          },
+          {
+            "name": "Hrle: 1,000 runs of 10 alternating values from iter - Memory Allocated",
+            "value": 795,
+            "unit": "KiB",
+            "range": "82108"
+          },
+          {
+            "name": "Rle: 1,000 runs of 10 alternating values from iter - Memory Allocated",
+            "value": 268859208,
+            "unit": "KiB",
+            "range": "10567371"
+          },
+          {
+            "name": "Vec: 1,000 runs of 10 alternating values from iter - Memory Allocated",
+            "value": 83885846,
+            "unit": "KiB",
+            "range": "34457"
           }
         ]
       }
