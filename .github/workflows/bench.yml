@@ -39,8 +39,6 @@ jobs:
           comment-on-alert: true
           # Enable Job Summary for PRs
           summary-always: true
-          # Mention @ken-matsui in the commit comment
-          alert-comment-cc-users: '@ken-matsui'
 
       - name: Store runtime benchmark result
         uses: benchmark-action/github-action-benchmark@v1
@@ -56,5 +54,3 @@ jobs:
           comment-on-alert: true
           # Enable Job Summary for PRs
           summary-always: true
-          # Mention @ken-matsui in the commit comment
-          alert-comment-cc-users: '@ken-matsui'
