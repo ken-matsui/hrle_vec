@@ -25,29 +25,48 @@ use crate::{HrleVec, Run};
 pub struct Iter<'a, T: 'a> {
     pub(crate) hrle: &'a HrleVec<T>,
     pub(crate) index: usize,
+    pub(crate) run_index: usize,
+    pub(crate) index_back: usize,
+    pub(crate) run_index_back: usize,
 }
 
 impl<'a, T: 'a> Iterator for Iter<'a, T> {
     type Item = &'a T;
 
+    // Time Complexity: O(1)
     fn next(&mut self) -> Option<Self::Item> {
-        if self.index == self.hrle.len() {
+        if self.index == self.index_back {
             return None;
         }
-        let value = &self.hrle[self.index];
+
+        let run = &self.hrle.runs[self.run_index];
+        let index_in_run = self.index - self.hrle.run_start(self.run_index);
+        let value = if run.repeat == 1 {
+            &run.values[index_in_run]
+        } else {
+            &run.values[index_in_run % run.values.len()]
+        };
+
         self.index += 1;
+        if self.index > run.end {
+            self.run_index += 1;
+        }
+
         Some(value)
     }
 
+    // Time Complexity: O(1)
     fn size_hint(&self) -> (usize, Option<usize>) {
         let len = self.hrle.len() - self.index;
         (len, Some(len))
     }
 
+    // Time Complexity: O(1)
     fn count(self) -> usize {
         self.len() // from ExactSizeIterator impl
     }
 
+    // Time Complexity: O(1)
     fn last(self) -> Option<Self::Item> {
         if self.index == self.hrle.len() {
             return None;
@@ -55,8 +74,14 @@ impl<'a, T: 'a> Iterator for Iter<'a, T> {
         self.hrle.last()
     }
 
+    // Time Complexity: O(log n)
     fn nth(&mut self, n: usize) -> Option<Self::Item> {
         self.index = min(self.index + n, self.hrle.len());
+        self.run_index = if self.index < self.hrle.len() {
+            self.hrle.run_index(self.index)
+        } else {
+            self.hrle.runs.len() - 1
+        };
         self.next()
     }
 }
@@ -64,12 +89,25 @@ impl<'a, T: 'a> Iterator for Iter<'a, T> {
 impl<'a, T: 'a> ExactSizeIterator for Iter<'a, T> {}
 
 impl<'a, T: 'a> DoubleEndedIterator for Iter<'a, T> {
+    // Time Complexity: O(1)
     fn next_back(&mut self) -> Option<Self::Item> {
         if self.hrle.len() == self.index {
             return None;
         }
-        let value = &self.hrle[self.index];
-        self.index -= 1;
+
+        self.index_back -= 1;
+        if self.run_index_back > 0 && self.index_back <= self.hrle.runs[self.run_index_back - 1].end
+        {
+            self.run_index_back -= 1;
+        }
+
+        let run = &self.hrle.runs[self.run_index_back];
+        let index_in_run = self.index_back - self.hrle.run_start(self.run_index_back);
+        let value = if run.repeat == 1 {
+            &run.values[index_in_run]
+        } else {
+            &run.values[index_in_run % run.values.len()]
+        };
         Some(value)
     }
 }

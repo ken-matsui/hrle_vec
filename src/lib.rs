@@ -8,8 +8,6 @@ mod parse;
 use std::num::NonZeroUsize;
 use std::slice::SliceIndex;
 
-use itertools::repeat_n;
-
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -116,6 +114,10 @@ impl<T> HrleVec<T> {
 
     /// Returns `true` if the [`HrleVec`] contains no elements.
     ///
+    /// # Time Complexity
+    ///
+    /// O(1)
+    ///
     /// # Examples
     ///
     /// ```
@@ -134,6 +136,10 @@ impl<T> HrleVec<T> {
     ///
     /// Note that this method has no effect on the allocated capacity of the vector.
     ///
+    /// # Time Complexity
+    ///
+    /// O(n)
+    ///
     /// # Examples
     ///
     /// ```
@@ -148,6 +154,10 @@ impl<T> HrleVec<T> {
     }
 
     /// Returns an iterator that can be used to iterate over the runs.
+    ///
+    /// # Time Complexity
+    ///
+    /// O(1)
     ///
     /// # Examples
     ///
@@ -183,6 +193,10 @@ impl<T> HrleVec<T> {
 
     /// Returns an iterator over values.  Comparable to a `Vec` iterator.
     ///
+    /// # Time Complexity
+    ///
+    /// O(1)
+    ///
     /// # Examples
     ///
     /// ```
@@ -206,10 +220,17 @@ impl<T> HrleVec<T> {
         iter::Iter {
             hrle: self,
             index: 0,
+            run_index: 0,
+            index_back: self.len(), // starts out of range
+            run_index_back: self.runs.len().saturating_sub(1),
         }
     }
 
     /// Returns the number of runs
+    ///
+    /// # Time Complexity
+    ///
+    /// O(1)
     ///
     /// # Examples
     ///
@@ -234,6 +255,10 @@ impl<T> HrleVec<T> {
 
     /// Returns the number of elements in the [`HrleVec`].
     ///
+    /// # Time Complexity
+    ///
+    /// O(1)
+    ///
     /// # Examples
     ///
     /// ```
@@ -253,6 +278,10 @@ impl<T> HrleVec<T> {
     }
 
     /// Returns the last run, or None if it is empty.
+    ///
+    /// # Time Complexity
+    ///
+    /// O(1)
     ///
     /// # Examples
     ///
@@ -308,6 +337,10 @@ impl<T> HrleVec<T> {
 
     /// Returns the last value, or None if it is empty.
     ///
+    /// # Time Complexity
+    ///
+    /// O(1)
+    ///
     /// # Examples
     ///
     /// ```
@@ -329,6 +362,10 @@ impl<T> HrleVec<T> {
     }
 
     /// Returns the index of the run containing the value with the given index.
+    ///
+    /// # Time Complexity
+    ///
+    /// O(log n)
     ///
     /// # Examples
     ///
@@ -356,6 +393,10 @@ impl<T> HrleVec<T> {
     }
 
     /// Returns the start index of the run with the given index.
+    ///
+    /// # Time Complexity
+    ///
+    /// O(1)
     ///
     /// # Examples
     ///
@@ -402,6 +443,10 @@ impl<T> HrleVec<T> {
     }
 
     /// Returns the run at the given index, or None if it does not exist.
+    ///
+    /// # Time Complexity
+    ///
+    /// O(1)
     ///
     /// # Examples
     ///
@@ -560,12 +605,38 @@ impl<T: Eq + Clone> HrleVec<T> {
     /// // Push 10 times a 2
     /// hrle.push_n(10, 2);
     /// assert_eq!(hrle[9], 2);
+    ///
+    /// // Push 2 times a 3
+    /// hrle.push_n(2, 3);
+    /// assert_eq!(hrle[10], 3);
+    /// assert_eq!(hrle.len(), 12);
+    /// assert_eq!(hrle.runs_len(), 2);
     /// ```
     pub fn push_n(&mut self, count: usize, value: T) {
         if count == 0 {
             return;
         }
-        *self = HrleVec::from_iter(self.to_vec().into_iter().chain(repeat_n(value, count)))
+
+        match self.runs.last_mut() {
+            None => {
+                self.runs.push(InternalRun {
+                    end: count - 1,
+                    repeat: count,
+                    values: vec![value; count],
+                });
+            }
+            Some(run) if run.values.len() == 1 && run.values[0] == value => {
+                run.end += count;
+                run.repeat += count;
+            }
+            Some(_) => {
+                *self = HrleVec::from_iter(
+                    self.to_vec()
+                        .into_iter()
+                        .chain(std::iter::repeat(value).take(count)),
+                );
+            }
+        };
     }
 
     /// Modify the value at given index.
