@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1719233941006,
+  "lastUpdate": 1719234790399,
   "repoUrl": "https://github.com/ken-matsui/hrle_vec",
   "entries": {
     "Memory Benchmark": [
@@ -2028,6 +2028,210 @@ window.BENCHMARK_DATA = {
             "value": 83885864,
             "unit": "KiB",
             "range": "35620"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "26405363+ken-matsui@users.noreply.github.com",
+            "name": "Ken Matsui",
+            "username": "ken-matsui"
+          },
+          "committer": {
+            "email": "26405363+ken-matsui@users.noreply.github.com",
+            "name": "Ken Matsui",
+            "username": "ken-matsui"
+          },
+          "distinct": true,
+          "id": "a19ce7dd67848a21a8dff446c59354dcaa164599",
+          "message": "comment on alert for bench main",
+          "timestamp": "2024-06-24T06:04:26-07:00",
+          "tree_id": "844163793fd2acb30a1ca83593e8c40d7789a66f",
+          "url": "https://github.com/ken-matsui/hrle_vec/commit/a19ce7dd67848a21a8dff446c59354dcaa164599"
+        },
+        "date": 1719234790073,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Hrle: create 10,000 unique values from slice - Memory Allocated",
+            "value": 550843944,
+            "unit": "KiB",
+            "range": "1352822"
+          },
+          {
+            "name": "Rle: create 10,000 unique values from slice - Memory Allocated",
+            "value": 268812333,
+            "unit": "KiB",
+            "range": "11560655"
+          },
+          {
+            "name": "Vec: create 10,000 unique values from slice - Memory Allocated",
+            "value": 41942856,
+            "unit": "KiB",
+            "range": "46196"
+          },
+          {
+            "name": "Hrle: create 10,000 unique values from iter - Memory Allocated",
+            "value": 550861719,
+            "unit": "KiB",
+            "range": "415306"
+          },
+          {
+            "name": "Rle: create 10,000 unique values from iter - Memory Allocated",
+            "value": 268522213,
+            "unit": "KiB",
+            "range": "13677544"
+          },
+          {
+            "name": "Vec: create 10,000 unique values from iter - Memory Allocated",
+            "value": 41942959,
+            "unit": "KiB",
+            "range": "11818"
+          },
+          {
+            "name": "Hrle: create 10,000 equal values from slice - Memory Allocated",
+            "value": 87,
+            "unit": "KiB",
+            "range": "15518"
+          },
+          {
+            "name": "Rle: create 10,000 equal values from slice - Memory Allocated",
+            "value": 248,
+            "unit": "KiB",
+            "range": "62907"
+          },
+          {
+            "name": "Vec: create 10,000 equal values from slice - Memory Allocated",
+            "value": 41942985,
+            "unit": "KiB",
+            "range": "9066"
+          },
+          {
+            "name": "Hrle: create 10,000 equal values from iter - Memory Allocated",
+            "value": 252,
+            "unit": "KiB",
+            "range": "30678"
+          },
+          {
+            "name": "Rle: create 10,000 equal values from iter - Memory Allocated",
+            "value": 145,
+            "unit": "KiB",
+            "range": "26531"
+          },
+          {
+            "name": "Vec: create 10,000 equal values from iter - Memory Allocated",
+            "value": 41942625,
+            "unit": "KiB",
+            "range": "95407"
+          },
+          {
+            "name": "Hrle: create 10,000 palindrome values from slice - Memory Allocated",
+            "value": 751261683,
+            "unit": "KiB",
+            "range": "3740230"
+          },
+          {
+            "name": "Rle: create 10,000 palindrome values from slice - Memory Allocated",
+            "value": 269305852,
+            "unit": "KiB",
+            "range": "17845605"
+          },
+          {
+            "name": "Vec: create 10,000 palindrome values from slice - Memory Allocated",
+            "value": 41942213,
+            "unit": "KiB",
+            "range": "125414"
+          },
+          {
+            "name": "Hrle: create 10,000 palindrome values from iter - Memory Allocated",
+            "value": 752288849,
+            "unit": "KiB",
+            "range": "2171066"
+          },
+          {
+            "name": "Rle: create 10,000 palindrome values from iter - Memory Allocated",
+            "value": 269012459,
+            "unit": "KiB",
+            "range": "14423183"
+          },
+          {
+            "name": "Vec: create 10,000 palindrome values from iter - Memory Allocated",
+            "value": 41942926,
+            "unit": "KiB",
+            "range": "16092"
+          },
+          {
+            "name": "Hrle: create 1,000 runs of 10 values from slice - Memory Allocated",
+            "value": 49315117,
+            "unit": "KiB",
+            "range": "148357"
+          },
+          {
+            "name": "Rle: create 1,000 runs of 10 values from slice - Memory Allocated",
+            "value": 1348,
+            "unit": "KiB",
+            "range": "146116"
+          },
+          {
+            "name": "Vec: create 1,000 runs of 10 values from slice - Memory Allocated",
+            "value": 41942577,
+            "unit": "KiB",
+            "range": "73181"
+          },
+          {
+            "name": "Hrle: create 1,000 runs of 10 values from iter - Memory Allocated",
+            "value": 49315447,
+            "unit": "KiB",
+            "range": "146367"
+          },
+          {
+            "name": "Rle: create 1,000 runs of 10 values from iter - Memory Allocated",
+            "value": 2415,
+            "unit": "KiB",
+            "range": "208794"
+          },
+          {
+            "name": "Vec: create 1,000 runs of 10 values from iter - Memory Allocated",
+            "value": 41942653,
+            "unit": "KiB",
+            "range": "165266"
+          },
+          {
+            "name": "Hrle: create 5,000 runs of 2 alternating values from slice - Memory Allocated",
+            "value": 335,
+            "unit": "KiB",
+            "range": "55792"
+          },
+          {
+            "name": "Rle: create 5,000 runs of 2 alternating values from slice - Memory Allocated",
+            "value": 268435815,
+            "unit": "KiB",
+            "range": "194119"
+          },
+          {
+            "name": "Vec: create 5,000 runs of 2 alternating values from slice - Memory Allocated",
+            "value": 83885776,
+            "unit": "KiB",
+            "range": "54028"
+          },
+          {
+            "name": "Hrle: create 5,000 runs of 2 alternating values from iter - Memory Allocated",
+            "value": 1188,
+            "unit": "KiB",
+            "range": "140375"
+          },
+          {
+            "name": "Rle: create 5,000 runs of 2 alternating values from iter - Memory Allocated",
+            "value": 269028538,
+            "unit": "KiB",
+            "range": "12747666"
+          },
+          {
+            "name": "Vec: create 5,000 runs of 2 alternating values from iter - Memory Allocated",
+            "value": 83885649,
+            "unit": "KiB",
+            "range": "70806"
           }
         ]
       }
