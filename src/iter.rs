@@ -94,7 +94,7 @@ impl<T: Eq + Clone> FromIterator<T> for HrleVec<T> {
 /// # use hrle_vec::{HrleVec, Run};
 /// let hrle = HrleVec::from(&[1, 2, 3, 1, 2, 3, 3][..]);
 ///
-/// let mut iterator = hrle.runs_iter();
+/// let mut iterator = hrle.runs();
 /// assert_eq!(
 ///     iterator.next(),
 ///     Some(Run {

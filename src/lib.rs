@@ -5,7 +5,8 @@ mod impls;
 mod iter;
 mod parse;
 
-use std::{num::NonZeroUsize, slice::SliceIndex};
+use std::num::NonZeroUsize;
+use std::slice::SliceIndex;
 
 use itertools::repeat_n;
 
@@ -18,7 +19,9 @@ pub struct HrleVec<T> {
     runs: Vec<InternalRun<T>>,
 }
 
-/// Represent a run inside the [`HrleVec`], can be obtained from the [`runs`](struct.HrleVec.html#method.runs). A run is a serie of the same value.
+/// Represent a run inside the [`HrleVec`], can be obtained from the
+/// [`runs`](struct.HrleVec.html#method.runs).  A run is a series of the same
+/// value.
 ///
 /// # Examples
 ///
@@ -26,7 +29,7 @@ pub struct HrleVec<T> {
 /// # use hrle_vec::{HrleVec, Run};
 /// let hrle = HrleVec::from(&[1, 2, 3, 1, 2, 3, 3][..]);
 ///
-/// let mut iterator = hrle.runs_iter();
+/// let mut iterator = hrle.runs();
 /// assert_eq!(
 ///     iterator.next(),
 ///     Some(Run {
@@ -152,7 +155,7 @@ impl<T> HrleVec<T> {
     /// # use hrle_vec::{HrleVec, Run};
     /// let hrle = HrleVec::from(&[1, 2, 3, 1, 2, 3, 3][..]);
     ///
-    /// let mut iterator = hrle.runs_iter();
+    /// let mut iterator = hrle.runs();
     /// assert_eq!(
     ///     iterator.next(),
     ///     Some(Run {
@@ -171,7 +174,7 @@ impl<T> HrleVec<T> {
     /// );
     /// assert_eq!(iterator.next(), None);
     /// ```
-    pub fn runs_iter(&self) -> iter::Runs<T> {
+    pub fn runs(&self) -> iter::Runs<T> {
         iter::Runs {
             hrle: self,
             run_index: 0,
