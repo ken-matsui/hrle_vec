@@ -16,24 +16,15 @@ fn create_10_000_unique_values_from_slice(c: &mut Criterion) {
     let vec = Vec::from_iter(0..10_000);
     let slice = vec.as_slice();
 
-    bench_memory_with_input(
-        &mut group,
-        &format!("Hrle: {}", group_name),
-        slice,
-        |slice| HrleVec::from(black_box(slice)),
-    );
-    bench_memory_with_input(
-        &mut group,
-        &format!("Rle: {}", group_name),
-        slice,
-        |slice| RleVec::from(black_box(slice)),
-    );
-    bench_memory_with_input(
-        &mut group,
-        &format!("Vec: {}", group_name),
-        slice,
-        |slice| Vec::from(black_box(slice)),
-    );
+    bench_memory_with_input(&mut group, group_name, "Hrle", slice, |slice| {
+        HrleVec::from(black_box(slice))
+    });
+    bench_memory_with_input(&mut group, group_name, "Rle", slice, |slice| {
+        RleVec::from(black_box(slice))
+    });
+    bench_memory_with_input(&mut group, group_name, "Vec", slice, |slice| {
+        Vec::from(black_box(slice))
+    });
 
     group.finish();
 }
@@ -42,15 +33,13 @@ fn create_10_000_unique_values_from_iter(c: &mut Criterion) {
     let group_name = "create 10,000 unique values from iter";
     let mut group = c.benchmark_group(group_name);
 
-    bench_memory(&mut group, &format!("Hrle: {}", group_name), || {
+    bench_memory(&mut group, group_name, "Hrle", || {
         HrleVec::from_iter(0..10_000)
     });
-    bench_memory(&mut group, &format!("Rle: {}", group_name), || {
+    bench_memory(&mut group, group_name, "Rle", || {
         RleVec::from_iter(0..10_000)
     });
-    bench_memory(&mut group, &format!("Vec: {}", group_name), || {
-        Vec::from_iter(0..10_000)
-    });
+    bench_memory(&mut group, group_name, "Vec", || Vec::from_iter(0..10_000));
 
     group.finish();
 }
@@ -62,24 +51,15 @@ fn create_10_000_equal_values_from_slice(c: &mut Criterion) {
     let vec = vec![0; 10_000];
     let slice = vec.as_slice();
 
-    bench_memory_with_input(
-        &mut group,
-        &format!("Hrle: {}", group_name),
-        slice,
-        |slice| HrleVec::from(black_box(slice)),
-    );
-    bench_memory_with_input(
-        &mut group,
-        &format!("Rle: {}", group_name),
-        slice,
-        |slice| RleVec::from(black_box(slice)),
-    );
-    bench_memory_with_input(
-        &mut group,
-        &format!("Vec: {}", group_name),
-        slice,
-        |slice| Vec::from(black_box(slice)),
-    );
+    bench_memory_with_input(&mut group, group_name, "Hrle", slice, |slice| {
+        HrleVec::from(black_box(slice))
+    });
+    bench_memory_with_input(&mut group, group_name, "Rle", slice, |slice| {
+        RleVec::from(black_box(slice))
+    });
+    bench_memory_with_input(&mut group, group_name, "Vec", slice, |slice| {
+        Vec::from(black_box(slice))
+    });
 
     group.finish();
 }
@@ -88,13 +68,13 @@ fn create_10_000_equal_values_from_iter(c: &mut Criterion) {
     let group_name = "create 10,000 equal values from iter";
     let mut group = c.benchmark_group(group_name);
 
-    bench_memory(&mut group, &format!("Hrle: {}", group_name), || {
+    bench_memory(&mut group, group_name, "Hrle", || {
         HrleVec::from_iter(repeat(0).take(10_000))
     });
-    bench_memory(&mut group, &format!("Rle: {}", group_name), || {
+    bench_memory(&mut group, group_name, "Rle", || {
         RleVec::from_iter(repeat(0).take(10_000))
     });
-    bench_memory(&mut group, &format!("Vec: {}", group_name), || {
+    bench_memory(&mut group, group_name, "Vec", || {
         Vec::from_iter(repeat(0).take(10_000))
     });
 
@@ -112,24 +92,15 @@ fn create_1000_runs_of_10_values_from_slice(c: &mut Criterion) {
     let vec = Vec::from_iter(iter);
     let slice = vec.as_slice();
 
-    bench_memory_with_input(
-        &mut group,
-        &format!("Hrle: {}", group_name),
-        slice,
-        |slice| HrleVec::from(black_box(slice)),
-    );
-    bench_memory_with_input(
-        &mut group,
-        &format!("Rle: {}", group_name),
-        slice,
-        |slice| RleVec::from(black_box(slice)),
-    );
-    bench_memory_with_input(
-        &mut group,
-        &format!("Vec: {}", group_name),
-        slice,
-        |slice| Vec::from(black_box(slice)),
-    );
+    bench_memory_with_input(&mut group, group_name, "Hrle", slice, |slice| {
+        HrleVec::from(black_box(slice))
+    });
+    bench_memory_with_input(&mut group, group_name, "Rle", slice, |slice| {
+        RleVec::from(black_box(slice))
+    });
+    bench_memory_with_input(&mut group, group_name, "Vec", slice, |slice| {
+        Vec::from(black_box(slice))
+    });
 
     group.finish();
 }
@@ -142,62 +113,50 @@ fn create_1000_runs_of_10_values_from_iter(c: &mut Criterion) {
     let ones = repeat(1).take(10);
     let iter = repeat(zeros.chain(ones)).flatten().take(10_000);
 
-    bench_memory_with_input(
-        &mut group,
-        &format!("Hrle: {}", group_name),
-        &iter,
-        |iter| HrleVec::from_iter(black_box(iter.clone())),
-    );
-    bench_memory_with_input(&mut group, &format!("Rle: {}", group_name), &iter, |iter| {
+    bench_memory_with_input(&mut group, group_name, "Hrle", &iter, |iter| {
+        HrleVec::from_iter(black_box(iter.clone()))
+    });
+    bench_memory_with_input(&mut group, group_name, "Rle", &iter, |iter| {
         RleVec::from_iter(black_box(iter.clone()))
     });
-    bench_memory_with_input(&mut group, &format!("Vec: {}", group_name), &iter, |iter| {
+    bench_memory_with_input(&mut group, group_name, "Vec", &iter, |iter| {
         Vec::from_iter(black_box(iter.clone()))
     });
 
     group.finish();
 }
 
-fn create_1000_runs_of_10_alternating_values_from_slice(c: &mut Criterion) {
-    let group_name = "create 1,000 runs of 10 alternating values from slice";
+fn create_5000_runs_of_2_alternating_values_from_slice(c: &mut Criterion) {
+    let group_name = "create 5,000 runs of 2 alternating values from slice";
     let mut group = c.benchmark_group(group_name);
 
     let vec = Vec::from_iter([0, 1].iter().cycle().take(10_000));
     let slice = vec.as_slice();
 
-    bench_memory_with_input(
-        &mut group,
-        &format!("Hrle: {}", group_name),
-        slice,
-        |slice| HrleVec::from(black_box(slice)),
-    );
-    bench_memory_with_input(
-        &mut group,
-        &format!("Rle: {}", group_name),
-        slice,
-        |slice| RleVec::from(black_box(slice)),
-    );
-    bench_memory_with_input(
-        &mut group,
-        &format!("Vec: {}", group_name),
-        slice,
-        |slice| Vec::from(black_box(slice)),
-    );
+    bench_memory_with_input(&mut group, group_name, "Hrle", slice, |slice| {
+        HrleVec::from(black_box(slice))
+    });
+    bench_memory_with_input(&mut group, group_name, "Rle", slice, |slice| {
+        RleVec::from(black_box(slice))
+    });
+    bench_memory_with_input(&mut group, group_name, "Vec", slice, |slice| {
+        Vec::from(black_box(slice))
+    });
 
     group.finish();
 }
 
-fn create_1000_runs_of_10_alternating_values_from_iter(c: &mut Criterion) {
-    let group_name = "create 1,000 runs of 10 alternating values from iter";
+fn create_5000_runs_of_2_alternating_values_from_iter(c: &mut Criterion) {
+    let group_name = "create 5,000 runs of 2 alternating values from iter";
     let mut group = c.benchmark_group(group_name);
 
-    bench_memory(&mut group, &format!("Hrle: {}", group_name), || {
+    bench_memory(&mut group, group_name, "Hrle", || {
         HrleVec::from_iter([0, 1].iter().cycle().take(10_000))
     });
-    bench_memory(&mut group, &format!("Rle: {}", group_name), || {
+    bench_memory(&mut group, group_name, "Rle", || {
         RleVec::from_iter([0, 1].iter().cycle().take(10_000))
     });
-    bench_memory(&mut group, &format!("Vec: {}", group_name), || {
+    bench_memory(&mut group, group_name, "Vec", || {
         Vec::from_iter([0, 1].iter().cycle().take(10_000))
     });
 
@@ -212,7 +171,7 @@ criterion_group!(
     create_10_000_equal_values_from_iter,
     create_1000_runs_of_10_values_from_slice,
     create_1000_runs_of_10_values_from_iter,
-    create_1000_runs_of_10_alternating_values_from_slice,
-    create_1000_runs_of_10_alternating_values_from_iter,
+    create_5000_runs_of_2_alternating_values_from_slice,
+    create_5000_runs_of_2_alternating_values_from_iter,
 );
 criterion_main!(benches);

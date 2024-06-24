@@ -52,14 +52,15 @@ fn save_results(name: &str, mem: &[f64]) {
 
 pub fn bench_memory<M: Measurement, T>(
     group: &mut BenchmarkGroup<'_, M>,
-    name: &str,
+    group_name: &str,
+    id: &str,
     f: impl Fn() -> T,
 ) {
     let epoch = jemalloc_ctl::epoch::mib().unwrap();
     let allocated = jemalloc_ctl::stats::allocated::mib().unwrap();
 
     let mut mem = vec![];
-    group.bench_function(name, |b| {
+    group.bench_function(id, |b| {
         b.iter(|| {
             epoch.advance().unwrap();
             let before = allocated.read().unwrap();
@@ -70,12 +71,13 @@ pub fn bench_memory<M: Measurement, T>(
             );
         })
     });
-    save_results(name, &mem[..]);
+    save_results(&format!("{id}: {group_name}"), &mem[..]);
 }
 
 pub fn bench_memory_with_input<M: Measurement, T, I: ?Sized>(
     group: &mut BenchmarkGroup<'_, M>,
-    name: &str,
+    group_name: &str,
+    id: &str,
     input: &I,
     f: impl Fn(&I) -> T,
 ) {
@@ -83,7 +85,7 @@ pub fn bench_memory_with_input<M: Measurement, T, I: ?Sized>(
     let allocated = jemalloc_ctl::stats::allocated::mib().unwrap();
 
     let mut mem = vec![];
-    group.bench_with_input(name, input, |b, input| {
+    group.bench_with_input(id, input, |b, input| {
         b.iter(|| {
             epoch.advance().unwrap();
             let before = allocated.read().unwrap();
@@ -94,5 +96,5 @@ pub fn bench_memory_with_input<M: Measurement, T, I: ?Sized>(
             );
         })
     });
-    save_results(name, &mem[..]);
+    save_results(&format!("{id}: {group_name}"), &mem[..]);
 }
