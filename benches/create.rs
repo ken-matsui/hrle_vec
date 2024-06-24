@@ -10,7 +10,7 @@ use rle_vec::RleVec;
 use utils::{bench_memory, bench_memory_with_input};
 
 fn create_10_000_unique_values_from_slice(c: &mut Criterion) {
-    let group_name = "10,000 unique values from slice";
+    let group_name = "create 10,000 unique values from slice";
     let mut group = c.benchmark_group(group_name);
 
     let vec = Vec::from_iter(0..10_000);
@@ -39,7 +39,7 @@ fn create_10_000_unique_values_from_slice(c: &mut Criterion) {
 }
 
 fn create_10_000_unique_values_from_iter(c: &mut Criterion) {
-    let group_name = "10,000 unique values from iter";
+    let group_name = "create 10,000 unique values from iter";
     let mut group = c.benchmark_group(group_name);
 
     bench_memory(&mut group, &format!("Hrle: {}", group_name), || {
@@ -56,7 +56,7 @@ fn create_10_000_unique_values_from_iter(c: &mut Criterion) {
 }
 
 fn create_10_000_equal_values_from_slice(c: &mut Criterion) {
-    let group_name = "10,000 equal values from slice";
+    let group_name = "create 10,000 equal values from slice";
     let mut group = c.benchmark_group(group_name);
 
     let vec = vec![0; 10_000];
@@ -85,7 +85,7 @@ fn create_10_000_equal_values_from_slice(c: &mut Criterion) {
 }
 
 fn create_10_000_equal_values_from_iter(c: &mut Criterion) {
-    let group_name = "10,000 equal values from iter";
+    let group_name = "create 10,000 equal values from iter";
     let mut group = c.benchmark_group(group_name);
 
     bench_memory(&mut group, &format!("Hrle: {}", group_name), || {
@@ -102,7 +102,7 @@ fn create_10_000_equal_values_from_iter(c: &mut Criterion) {
 }
 
 fn create_1000_runs_of_10_values_from_slice(c: &mut Criterion) {
-    let group_name = "1,000 runs of 10 values from slice";
+    let group_name = "create 1,000 runs of 10 values from slice";
     let mut group = c.benchmark_group(group_name);
 
     let zeros = repeat(0).take(10);
@@ -135,7 +135,7 @@ fn create_1000_runs_of_10_values_from_slice(c: &mut Criterion) {
 }
 
 fn create_1000_runs_of_10_values_from_iter(c: &mut Criterion) {
-    let group_name = "1,000 runs of 10 values from iter";
+    let group_name = "create 1,000 runs of 10 values from iter";
     let mut group = c.benchmark_group(group_name);
 
     let zeros = repeat(0).take(10);
@@ -159,7 +159,7 @@ fn create_1000_runs_of_10_values_from_iter(c: &mut Criterion) {
 }
 
 fn create_1000_runs_of_10_alternating_values_from_slice(c: &mut Criterion) {
-    let group_name = "1,000 runs of 10 alternating values from slice";
+    let group_name = "create 1,000 runs of 10 alternating values from slice";
     let mut group = c.benchmark_group(group_name);
 
     let vec = Vec::from_iter([0, 1].iter().cycle().take(10_000));
@@ -188,7 +188,7 @@ fn create_1000_runs_of_10_alternating_values_from_slice(c: &mut Criterion) {
 }
 
 fn create_1000_runs_of_10_alternating_values_from_iter(c: &mut Criterion) {
-    let group_name = "1,000 runs of 10 alternating values from iter";
+    let group_name = "create 1,000 runs of 10 alternating values from iter";
     let mut group = c.benchmark_group(group_name);
 
     bench_memory(&mut group, &format!("Hrle: {}", group_name), || {
