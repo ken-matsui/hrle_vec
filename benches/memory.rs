@@ -1,10 +1,10 @@
 use std::fs::{File, OpenOptions};
 use std::hint::black_box;
 use std::io::{Read, Write};
-use std::iter::repeat;
 
 use criterion::{criterion_group, criterion_main, Criterion};
 use hrle_vec::HrleVec;
+use itertools::repeat_n;
 use rle_vec::RleVec;
 use serde::{Deserialize, Serialize};
 use statistical::{mean, standard_deviation};
@@ -72,21 +72,21 @@ fn benchmark<'a, T: 'a, I: 'a>(c: &mut Criterion, name: &str, iter: &'a I, f: im
 }
 
 fn hrle_all_dup(c: &mut Criterion) {
-    let iter = repeat(1).take(10_000);
+    let iter = repeat_n(1, 10_000);
     benchmark(c, "Hrle: All Dup", &iter, |iter| {
         HrleVec::from_iter(iter.clone())
     });
 }
 
 fn rle_all_dup(c: &mut Criterion) {
-    let iter = repeat(1).take(10_000);
+    let iter = repeat_n(1, 10_000);
     benchmark(c, "Rle: All Dup", &iter, |iter| {
         RleVec::from_iter(iter.clone())
     });
 }
 
 fn vec_all_dup(c: &mut Criterion) {
-    let iter = repeat(1).take(10_000);
+    let iter = repeat_n(1, 10_000);
     benchmark(c, "Vec: All Dup", &iter, |iter| {
         Vec::from_iter(iter.clone())
     });
@@ -135,27 +135,27 @@ fn vec_repeat_long(c: &mut Criterion) {
 }
 
 fn hrle_repeat_0_1_of_10_values(c: &mut Criterion) {
-    let zeros = repeat(0).take(10);
-    let ones = repeat(1).take(10);
-    let iter = repeat(zeros.chain(ones)).flatten().take(10_000);
+    let zeros = repeat_n(0, 10);
+    let ones = repeat_n(1, 10);
+    let iter = repeat_n(zeros.chain(ones), 10_000).flatten();
     benchmark(c, "Hrle: Repeat 0 & 1 ten times each", &iter, |iter| {
         HrleVec::from_iter(iter.clone())
     });
 }
 
 fn rle_repeat_0_1_of_10_values(c: &mut Criterion) {
-    let zeros = repeat(0).take(10);
-    let ones = repeat(1).take(10);
-    let iter = repeat(zeros.chain(ones)).flatten().take(10_000);
+    let zeros = repeat_n(0, 10);
+    let ones = repeat_n(1, 10);
+    let iter = repeat_n(zeros.chain(ones), 10_000).flatten();
     benchmark(c, "Rle: Repeat 0 & 1 ten times each", &iter, |iter| {
         RleVec::from_iter(iter.clone())
     });
 }
 
 fn vec_repeat_0_1_of_10_values(c: &mut Criterion) {
-    let zeros = repeat(0).take(10);
-    let ones = repeat(1).take(10);
-    let iter = repeat(zeros.chain(ones)).flatten().take(10_000);
+    let zeros = repeat_n(0, 10);
+    let ones = repeat_n(1, 10);
+    let iter = repeat_n(zeros.chain(ones), 10_000).flatten();
     benchmark(c, "Vec: Repeat 0 & 1 ten times each", &iter, |iter| {
         Vec::from_iter(iter.clone())
     });
