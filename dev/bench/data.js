@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1719195326811,
+  "lastUpdate": 1719195328391,
   "repoUrl": "https://github.com/ken-matsui/hrle_vec",
   "entries": {
     "Memory Benchmark": [
@@ -2545,6 +2545,174 @@ window.BENCHMARK_DATA = {
             "name": "All Unique/Vec",
             "value": 68733,
             "range": "± 466",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "26405363+ken-matsui@users.noreply.github.com",
+            "name": "Ken Matsui",
+            "username": "ken-matsui"
+          },
+          "committer": {
+            "email": "26405363+ken-matsui@users.noreply.github.com",
+            "name": "Ken Matsui",
+            "username": "ken-matsui"
+          },
+          "distinct": true,
+          "id": "b47757a78afd51831b9cb565af9a442b76ade770",
+          "message": "organize benches",
+          "timestamp": "2024-06-23T19:09:44-07:00",
+          "tree_id": "b97baff92693269deff23872cc115323910fd35a",
+          "url": "https://github.com/ken-matsui/hrle_vec/commit/b47757a78afd51831b9cb565af9a442b76ade770"
+        },
+        "date": 1719195327789,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "10,000 unique values from slice/Hrle: 10,000 unique values from slice",
+            "value": 77655680,
+            "range": "± 284770",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "10,000 unique values from slice/Rle: 10,000 unique values from slice",
+            "value": 86762,
+            "range": "± 1278",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "10,000 unique values from slice/Vec: 10,000 unique values from slice",
+            "value": 73754,
+            "range": "± 726",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "10,000 unique values from iter/Hrle: 10,000 unique values from iter",
+            "value": 77728727,
+            "range": "± 257850",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "10,000 unique values from iter/Rle: 10,000 unique values from iter",
+            "value": 82108,
+            "range": "± 1503",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "10,000 unique values from iter/Vec: 10,000 unique values from iter",
+            "value": 72774,
+            "range": "± 560",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "10,000 equal values from slice/Hrle: 10,000 equal values from slice",
+            "value": 105928,
+            "range": "± 1083",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "10,000 equal values from slice/Rle: 10,000 equal values from slice",
+            "value": 74524,
+            "range": "± 364",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "10,000 equal values from slice/Vec: 10,000 equal values from slice",
+            "value": 73128,
+            "range": "± 481",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "10,000 equal values from iter/Hrle: 10,000 equal values from iter",
+            "value": 107646,
+            "range": "± 321",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "10,000 equal values from iter/Rle: 10,000 equal values from iter",
+            "value": 71327,
+            "range": "± 232",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "10,000 equal values from iter/Vec: 10,000 equal values from iter",
+            "value": 72465,
+            "range": "± 285",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "1,000 runs of 10 values from slice/Hrle: 1,000 runs of 10 values from slice",
+            "value": 128344,
+            "range": "± 938",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "1,000 runs of 10 values from slice/Rle: 1,000 runs of 10 values from slice",
+            "value": 76400,
+            "range": "± 555",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "1,000 runs of 10 values from slice/Vec: 1,000 runs of 10 values from slice",
+            "value": 73677,
+            "range": "± 4212",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "1,000 runs of 10 values from iter/Hrle: 1,000 runs of 10 values from iter",
+            "value": 166640,
+            "range": "± 849",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "1,000 runs of 10 values from iter/Rle: 1,000 runs of 10 values from iter",
+            "value": 111269,
+            "range": "± 379",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "1,000 runs of 10 values from iter/Vec: 1,000 runs of 10 values from iter",
+            "value": 109679,
+            "range": "± 582",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "1,000 runs of 10 alternating values from slice/Hrle: 1,000 runs of 10 alternating values from slice",
+            "value": 86104,
+            "range": "± 668",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "1,000 runs of 10 alternating values from slice/Rle: 1,000 runs of 10 alternating values from slice",
+            "value": 87929,
+            "range": "± 1251",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "1,000 runs of 10 alternating values from slice/Vec: 1,000 runs of 10 alternating values from slice",
+            "value": 75198,
+            "range": "± 1938",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "1,000 runs of 10 alternating values from iter/Hrle: 1,000 runs of 10 alternating values from iter",
+            "value": 101396,
+            "range": "± 844",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "1,000 runs of 10 alternating values from iter/Rle: 1,000 runs of 10 alternating values from iter",
+            "value": 90511,
+            "range": "± 1517",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "1,000 runs of 10 alternating values from iter/Vec: 1,000 runs of 10 alternating values from iter",
+            "value": 81286,
+            "range": "± 604",
             "unit": "ns/iter"
           }
         ]
