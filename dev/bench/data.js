@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1719205408769,
+  "lastUpdate": 1719205409798,
   "repoUrl": "https://github.com/ken-matsui/hrle_vec",
   "entries": {
     "Memory Benchmark": [
@@ -3061,6 +3061,282 @@ window.BENCHMARK_DATA = {
             "name": "create 5,000 runs of 2 alternating values from iter/Vec",
             "value": 77104,
             "range": "± 708",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "26405363+ken-matsui@users.noreply.github.com",
+            "name": "Ken Matsui",
+            "username": "ken-matsui"
+          },
+          "committer": {
+            "email": "26405363+ken-matsui@users.noreply.github.com",
+            "name": "Ken Matsui",
+            "username": "ken-matsui"
+          },
+          "distinct": true,
+          "id": "b2d02cf0952420be99d531d58abb1f0660fcc480",
+          "message": "avoid unnecessary heap allocation",
+          "timestamp": "2024-06-23T21:54:50-07:00",
+          "tree_id": "73f4ff243813bd8ab655fb690da45957e8338c28",
+          "url": "https://github.com/ken-matsui/hrle_vec/commit/b2d02cf0952420be99d531d58abb1f0660fcc480"
+        },
+        "date": 1719205409573,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "iterate 10,000 unique values/Hrle",
+            "value": 29762,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iterate 10,000 unique values/Rle",
+            "value": 21828,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iterate 10,000 unique values/Vec",
+            "value": 3262,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iterate 10,000 equal values/Hrle",
+            "value": 28345,
+            "range": "± 826",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iterate 10,000 equal values/Rle",
+            "value": 22038,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iterate 10,000 equal values/Vec",
+            "value": 4731,
+            "range": "± 62",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iterate 1,000 runs of 10 values/Hrle",
+            "value": 34017,
+            "range": "± 784",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iterate 1,000 runs of 10 values/Rle",
+            "value": 22289,
+            "range": "± 55",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iterate 1,000 runs of 10 values/Vec",
+            "value": 6192,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iterate 5,000 runs of 2 alternating values/Hrle",
+            "value": 30144,
+            "range": "± 171",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iterate 5,000 runs of 2 alternating values/Rle",
+            "value": 22288,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iterate 5,000 runs of 2 alternating values/Vec",
+            "value": 4647,
+            "range": "± 198",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 10,000 unique values from slice/Hrle",
+            "value": 573345,
+            "range": "± 3581",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 10,000 unique values from slice/Rle",
+            "value": 84259,
+            "range": "± 1493",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 10,000 unique values from slice/Vec",
+            "value": 69392,
+            "range": "± 265",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 10,000 unique values from iter/Hrle",
+            "value": 630536,
+            "range": "± 1971",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 10,000 unique values from iter/Rle",
+            "value": 78385,
+            "range": "± 441",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 10,000 unique values from iter/Vec",
+            "value": 68420,
+            "range": "± 330",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 10,000 equal values from slice/Hrle",
+            "value": 70982,
+            "range": "± 305",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 10,000 equal values from slice/Rle",
+            "value": 69921,
+            "range": "± 389",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 10,000 equal values from slice/Vec",
+            "value": 68341,
+            "range": "± 287",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 10,000 equal values from iter/Hrle",
+            "value": 73368,
+            "range": "± 404",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 10,000 equal values from iter/Rle",
+            "value": 66851,
+            "range": "± 206",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 10,000 equal values from iter/Vec",
+            "value": 68665,
+            "range": "± 279",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 10,000 palindrome values from slice/Hrle",
+            "value": 77923965,
+            "range": "± 1802121",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 10,000 palindrome values from slice/Rle",
+            "value": 80758,
+            "range": "± 397",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 10,000 palindrome values from slice/Vec",
+            "value": 69333,
+            "range": "± 554",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 10,000 palindrome values from iter/Hrle",
+            "value": 77948527,
+            "range": "± 294504",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 10,000 palindrome values from iter/Rle",
+            "value": 84414,
+            "range": "± 2227",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 10,000 palindrome values from iter/Vec",
+            "value": 69047,
+            "range": "± 557",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 1,000 runs of 10 values from slice/Hrle",
+            "value": 125040,
+            "range": "± 1147",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 1,000 runs of 10 values from slice/Rle",
+            "value": 72670,
+            "range": "± 512",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 1,000 runs of 10 values from slice/Vec",
+            "value": 69829,
+            "range": "± 341",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 1,000 runs of 10 values from iter/Hrle",
+            "value": 170502,
+            "range": "± 1090",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 1,000 runs of 10 values from iter/Rle",
+            "value": 103685,
+            "range": "± 856",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 1,000 runs of 10 values from iter/Vec",
+            "value": 106719,
+            "range": "± 1418",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 5,000 runs of 2 alternating values from slice/Hrle",
+            "value": 80597,
+            "range": "± 795",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 5,000 runs of 2 alternating values from slice/Rle",
+            "value": 83274,
+            "range": "± 1076",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 5,000 runs of 2 alternating values from slice/Vec",
+            "value": 71363,
+            "range": "± 286",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 5,000 runs of 2 alternating values from iter/Hrle",
+            "value": 99918,
+            "range": "± 876",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 5,000 runs of 2 alternating values from iter/Rle",
+            "value": 86417,
+            "range": "± 2397",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "create 5,000 runs of 2 alternating values from iter/Vec",
+            "value": 77135,
+            "range": "± 211",
             "unit": "ns/iter"
           }
         ]
