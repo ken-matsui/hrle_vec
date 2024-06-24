@@ -33,7 +33,3 @@ bench = false
 [[bench]]
 harness = false
 name = "create"
-
-[[bench]]
-harness = false
-name = "memory"

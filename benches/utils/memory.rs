@@ -18,28 +18,7 @@ struct BenchmarkResult {
     range: String,
 }
 
-pub fn bench_with_memory<'a, M: Measurement, T: 'a, I: 'a>(
-    group: &mut BenchmarkGroup<'a, M>,
-    name: &str,
-    iter: &'a I,
-    f: impl Fn(&'a I) -> T,
-) {
-    let epoch = jemalloc_ctl::epoch::mib().unwrap();
-    let allocated = jemalloc_ctl::stats::allocated::mib().unwrap();
-
-    let mut mem = vec![];
-    group.bench_function(name, |b| {
-        b.iter(|| {
-            epoch.advance().unwrap();
-            let before = allocated.read().unwrap();
-            let _ctx = black_box(f(iter));
-            epoch.advance().unwrap();
-            mem.push(
-                allocated.read().unwrap().abs_diff(before) as f64 * 1024., // to KiB
-            );
-        })
-    });
-
+fn save_results(name: &str, mem: &[f64]) {
     let mean = mean(&mem);
     let std_dev = standard_deviation(&mem, Some(mean)) as u64;
     let mean = mean as u64;
@@ -69,4 +48,51 @@ pub fn bench_with_memory<'a, M: Measurement, T: 'a, I: 'a>(
         .unwrap();
 
     writeln!(file, "{}", json).unwrap();
+}
+
+pub fn bench_memory<M: Measurement, T>(
+    group: &mut BenchmarkGroup<'_, M>,
+    name: &str,
+    f: impl Fn() -> T,
+) {
+    let epoch = jemalloc_ctl::epoch::mib().unwrap();
+    let allocated = jemalloc_ctl::stats::allocated::mib().unwrap();
+
+    let mut mem = vec![];
+    group.bench_function(name, |b| {
+        b.iter(|| {
+            epoch.advance().unwrap();
+            let before = allocated.read().unwrap();
+            let _ctx = black_box(f());
+            epoch.advance().unwrap();
+            mem.push(
+                allocated.read().unwrap().abs_diff(before) as f64 * 1024., // to KiB
+            );
+        })
+    });
+    save_results(name, &mem[..]);
+}
+
+pub fn bench_memory_with_input<M: Measurement, T, I: ?Sized>(
+    group: &mut BenchmarkGroup<'_, M>,
+    name: &str,
+    input: &I,
+    f: impl Fn(&I) -> T,
+) {
+    let epoch = jemalloc_ctl::epoch::mib().unwrap();
+    let allocated = jemalloc_ctl::stats::allocated::mib().unwrap();
+
+    let mut mem = vec![];
+    group.bench_with_input(name, input, |b, input| {
+        b.iter(|| {
+            epoch.advance().unwrap();
+            let before = allocated.read().unwrap();
+            let _ctx = black_box(f(black_box(input)));
+            epoch.advance().unwrap();
+            mem.push(
+                allocated.read().unwrap().abs_diff(before) as f64 * 1024., // to KiB
+            );
+        })
+    });
+    save_results(name, &mem[..]);
 }
