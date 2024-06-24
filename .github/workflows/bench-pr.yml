@@ -1,0 +1,62 @@
+name: Benchmark PR
+
+on:
+  pull_request:
+
+permissions:
+  pull-requests: write
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo bench -- --output-format bencher | tee output.txt
+
+      # Download previous benchmark result from cache (if exists)
+      - name: Download previous benchmark data
+        uses: actions/cache@v4
+        with:
+          path: ./cache
+          key: ${{ runner.os }}-benchmark
+
+      - name: Show memory benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: 'Memory Benchmark'
+          tool: 'customSmallerIsBetter'
+          output-file-path: memory_benchmark_results.json
+          # Don't push to the GitHub pages branch
+          auto-push: false
+          # GitHub API token to make a commit comment
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Enable alert commit comment
+          comment-on-alert: true
+          # Enable Job Summary for PRs
+          summary-always: true
+          # Mention @ken-matsui in the commit comment
+          alert-comment-cc-users: '@ken-matsui'
+
+      - name: Remove memory benchmark result
+        run: |
+          git switch gh-pages
+          git reset --hard HEAD~1
+          git switch --detach -
+
+      - name: Show runtime benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: 'Runtime Benchmark'
+          tool: 'cargo'
+          output-file-path: output.txt
+          # Don't push to the GitHub pages branch
+          auto-push: false
+          # GitHub API token to make a commit comment
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Enable alert commit comment
+          comment-on-alert: true
+          # Enable Job Summary for PRs
+          summary-always: true
+          # Mention @ken-matsui in the commit comment
+          alert-comment-cc-users: '@ken-matsui'
