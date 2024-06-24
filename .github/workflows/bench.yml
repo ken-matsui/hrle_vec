@@ -35,6 +35,12 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           # Push and deploy GitHub pages branch automatically
           auto-push: true
+          # Enable alert commit comment
+          comment-on-alert: true
+          # Enable Job Summary for PRs
+          summary-always: true
+          # Mention @ken-matsui in the commit comment
+          alert-comment-cc-users: '@ken-matsui'
 
       - name: Store runtime benchmark result
         uses: benchmark-action/github-action-benchmark@v1
@@ -46,3 +52,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           # Push and deploy GitHub pages branch automatically
           auto-push: true
+          # Enable alert commit comment
+          comment-on-alert: true
+          # Enable Job Summary for PRs
+          summary-always: true
+          # Mention @ken-matsui in the commit comment
+          alert-comment-cc-users: '@ken-matsui'
