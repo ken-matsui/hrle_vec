@@ -1,7 +1,7 @@
 use std::cmp::min;
 use std::hash::Hash;
 
-use crate::{HrleVec, Run};
+use crate::{HrleVec, RunRef};
 
 /// Immutable `HrleVec` iterator over references of values.
 ///
@@ -41,12 +41,7 @@ impl<'a, T: 'a> Iterator for Iter<'a, T> {
         }
 
         let run = &self.hrle.runs[self.run_index];
-        let index_in_run = self.index - self.hrle.run_start(self.run_index);
-        let value = if run.repeat == 1 {
-            &run.values[index_in_run]
-        } else {
-            &run.values[index_in_run % run.values.len()]
-        };
+        let value = &run[self.index - self.hrle.run_start(self.run_index)];
 
         self.index += 1;
         if self.index > run.end {
@@ -103,13 +98,7 @@ impl<'a, T: 'a> DoubleEndedIterator for Iter<'a, T> {
         }
 
         let run = &self.hrle.runs[self.run_index_back];
-        let index_in_run = self.index_back - self.hrle.run_start(self.run_index_back);
-        let value = if run.repeat == 1 {
-            &run.values[index_in_run]
-        } else {
-            &run.values[index_in_run % run.values.len()]
-        };
-        Some(value)
+        Some(&run[self.index_back - self.hrle.run_start(self.run_index_back)])
     }
 }
 
@@ -139,7 +128,7 @@ impl<T: Eq + Clone + Hash> FromIterator<T> for HrleVec<T> {
 ///     Some(Run {
 ///         start: 0,
 ///         len: 6,
-///         values: vec![&1, &2, &3]
+///         values: &vec![1, 2, 3]
 ///     })
 /// );
 /// assert_eq!(
@@ -147,7 +136,7 @@ impl<T: Eq + Clone + Hash> FromIterator<T> for HrleVec<T> {
 ///     Some(Run {
 ///         start: 6,
 ///         len: 1,
-///         values: vec![&3],
+///         values: &vec![3],
 ///     })
 /// );
 /// assert_eq!(iterator.next(), None);
@@ -158,7 +147,7 @@ pub struct Runs<'a, T: 'a> {
 }
 
 impl<'a, T: 'a> Iterator for Runs<'a, T> {
-    type Item = Run<&'a T>;
+    type Item = RunRef<'a, T>;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.run_index == self.hrle.runs.len() {
@@ -167,10 +156,10 @@ impl<'a, T: 'a> Iterator for Runs<'a, T> {
         let run = &self.hrle.runs[self.run_index];
         let start = self.hrle.run_start(self.run_index);
         self.run_index += 1;
-        Some(Run {
+        Some(RunRef {
             start,
             len: run.len().get(),
-            values: run.values.iter().collect(),
+            values: &run.values,
         })
     }
 

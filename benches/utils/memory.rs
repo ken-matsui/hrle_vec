@@ -51,7 +51,7 @@ fn save_results(name: &str, mem: &[f64]) {
 }
 
 pub fn bench_memory<M: Measurement, T>(
-    group: &mut BenchmarkGroup<'_, M>,
+    group: &mut BenchmarkGroup<M>,
     group_name: &str,
     id: &str,
     f: impl Fn() -> T,
@@ -75,7 +75,7 @@ pub fn bench_memory<M: Measurement, T>(
 }
 
 pub fn bench_memory_with_input<M: Measurement, T, I: ?Sized>(
-    group: &mut BenchmarkGroup<'_, M>,
+    group: &mut BenchmarkGroup<M>,
     group_name: &str,
     id: &str,
     input: &I,

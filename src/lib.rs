@@ -34,7 +34,7 @@ pub struct HrleVec<T> {
 ///     Some(Run {
 ///         start: 0,
 ///         len: 6,
-///         values: vec![&1, &2, &3],
+///         values: &vec![1, 2, 3],
 ///     })
 /// );
 /// assert_eq!(
@@ -42,7 +42,7 @@ pub struct HrleVec<T> {
 ///     Some(Run {
 ///         start: 6,
 ///         len: 1,
-///         values: vec![&3],
+///         values: &vec![3],
 ///     })
 /// );
 /// assert_eq!(iterator.next(), None);
@@ -54,8 +54,9 @@ pub struct Run<T> {
     /// The length of this run.
     pub len: usize,
     /// The values of this run.
-    pub values: Vec<T>,
+    pub values: T,
 }
+type RunRef<'a, T> = Run<&'a Vec<T>>;
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
@@ -172,7 +173,7 @@ impl<T> HrleVec<T> {
     ///     Some(Run {
     ///         start: 0,
     ///         len: 6,
-    ///         values: vec![&1, &2, &3],
+    ///         values: &vec![1, 2, 3],
     ///     })
     /// );
     /// assert_eq!(
@@ -180,7 +181,7 @@ impl<T> HrleVec<T> {
     ///     Some(Run {
     ///         start: 6,
     ///         len: 1,
-    ///         values: vec![&3],
+    ///         values: &vec![3],
     ///     })
     /// );
     /// assert_eq!(iterator.next(), None);
@@ -303,7 +304,7 @@ impl<T> HrleVec<T> {
     ///     Some(Run {
     ///         start: 0,
     ///         len: 4,
-    ///         values: vec![&1],
+    ///         values: &vec![1],
     ///     })
     /// );
     ///
@@ -318,21 +319,21 @@ impl<T> HrleVec<T> {
     ///     Some(Run {
     ///         start: 6,
     ///         len: 1,
-    ///         values: vec![&3],
+    ///         values: &vec![3],
     ///     })
     /// );
     /// ```
-    pub fn last_run(&self) -> Option<Run<&T>> {
+    pub fn last_run(&self) -> Option<RunRef<T>> {
         let prev_end = if self.runs.len() >= 2 {
             self.runs[self.runs.len() - 2].end + 1
         } else {
             0
         };
 
-        self.runs.last().map(|run| Run {
+        self.runs.last().map(|run| RunRef {
             start: prev_end,
             len: run.end + 1 - prev_end,
-            values: run.values.iter().collect(),
+            values: &run.values,
         })
     }
 
@@ -429,20 +430,6 @@ impl<T> HrleVec<T> {
         }
     }
 
-    pub fn as_ref(&self) -> HrleVec<&T> {
-        HrleVec {
-            runs: self
-                .runs
-                .iter()
-                .map(|run| InternalRun {
-                    end: run.end,
-                    repeat: run.repeat,
-                    values: run.values.iter().collect(),
-                })
-                .collect(),
-        }
-    }
-
     /// Returns the run at the given index, or None if it does not exist.
     ///
     /// # Time Complexity
@@ -460,18 +447,18 @@ impl<T> HrleVec<T> {
     ///     Some(Run {
     ///         start: 6,
     ///         len: 1,
-    ///         values: vec![&3],
+    ///         values: &vec![3],
     ///     })
     /// );
     /// assert_eq!(hrle.get_run(2), None);
     /// ```
-    pub fn get_run(&self, run_index: usize) -> Option<Run<&T>> {
+    pub fn get_run(&self, run_index: usize) -> Option<RunRef<T>> {
         self.runs.get(run_index).map(|internal_run| {
             let start = self.run_start(run_index);
-            Run {
+            RunRef {
                 start,
                 len: internal_run.end + 1 - start,
-                values: internal_run.values.iter().collect(),
+                values: &internal_run.values,
             }
         })
     }
@@ -697,10 +684,11 @@ impl<T: Eq + Clone + Hash> HrleVec<T> {
         I: SliceIndex<[T], Output = [T]>,
     {
         let mut vec = self.to_vec();
-        if let Some(slice) = vec.get_mut(index) {
-            for elem in slice.iter_mut() {
-                *elem = value.clone();
-            }
+        let Some(slice) = vec.get_mut(index) else {
+            panic!("Index out of bounds");
+        };
+        for elem in slice.iter_mut() {
+            *elem = value.clone();
         }
         *self = HrleVec::from_iter(vec);
     }
@@ -724,23 +712,6 @@ impl<T: Eq + Clone + Hash> HrleVec<T> {
     }
 }
 
-#[allow(clippy::len_without_is_empty)]
-impl<T> Run<T> {
-    /// Returns the length of the run value.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use hrle_vec::{HrleVec, Run};
-    /// let mut hrle = HrleVec::from(&[1, 2, 3, 2, 3][..]);
-    /// assert_eq!(hrle.get_run(0).unwrap().len(), 1);
-    /// assert_eq!(hrle.get_run(1).unwrap().len(), 4);
-    /// ```
-    pub fn len(&self) -> usize {
-        self.len
-    }
-}
-
 impl<T> InternalRun<T> {
     /// Returns the length of the run value.
     ///
@@ -754,7 +725,7 @@ impl<T> InternalRun<T> {
     ///     Some(Run {
     ///         start: 0,
     ///         len: 1,
-    ///         values: vec![&1]
+    ///         values: &vec![1]
     ///     })
     /// );
     /// assert_eq!(
@@ -762,11 +733,11 @@ impl<T> InternalRun<T> {
     ///     Some(Run {
     ///         start: 1,
     ///         len: 4,
-    ///         values: vec![&2, &3]
+    ///         values: &vec![2, 3]
     ///     })
     /// );
-    /// assert_eq!(hrle.get_run(0).unwrap().len(), 1);
-    /// assert_eq!(hrle.get_run(1).unwrap().len(), 4);
+    /// assert_eq!(hrle.get_run(0).unwrap().len, 1);
+    /// assert_eq!(hrle.get_run(1).unwrap().len, 4);
     ///
     /// for _ in 0..10 {
     ///     hrle.push_unencoded(2);
@@ -775,7 +746,7 @@ impl<T> InternalRun<T> {
     /// hrle.encode();
     ///
     /// assert_eq!(hrle.runs_len(), 2);
-    /// assert_eq!(hrle.get_run(1).unwrap().len(), 24);
+    /// assert_eq!(hrle.get_run(1).unwrap().len, 24);
     /// ```
     pub fn len(&self) -> NonZeroUsize {
         NonZeroUsize::new(self.repeat * self.values.len()).unwrap()

@@ -3,7 +3,7 @@ use std::io;
 use std::ops::Index;
 
 use crate::parse::encode;
-use crate::HrleVec;
+use crate::{HrleVec, InternalRun};
 
 #[allow(clippy::from_over_into)]
 impl<T: Clone> Into<Vec<T>> for HrleVec<T> {
@@ -24,18 +24,27 @@ impl<T: Default> Default for HrleVec<T> {
     }
 }
 
+impl<T> Index<usize> for InternalRun<T> {
+    type Output = T;
+
+    // Time Complexity: O(1)
+    fn index(&self, index_in_run: usize) -> &T {
+        if self.repeat == 1 {
+            &self.values[index_in_run]
+        } else {
+            &self.values[index_in_run % self.values.len()]
+        }
+    }
+}
+
 impl<T> Index<usize> for HrleVec<T> {
     type Output = T;
 
+    // Time Complexity: O(log n)
     fn index(&self, index: usize) -> &T {
         let ri = self.run_index(index);
         let run = &self.runs[ri];
-        let index_in_run = index - self.run_start(ri);
-        if run.repeat == 1 {
-            &run.values[index_in_run]
-        } else {
-            &run.values[index_in_run % run.values.len()]
-        }
+        &run[index - self.run_start(ri)]
     }
 }
 
