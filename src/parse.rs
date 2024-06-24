@@ -1,10 +1,11 @@
 use std::hash::Hash;
 
 use itertools::Itertools;
+use rayon::prelude::*;
 
 use crate::{HrleVec, InternalRun};
 
-pub(crate) fn encode<T: Clone + Eq + Hash>(v: &[T]) -> HrleVec<T> {
+pub(crate) fn encode<T: Clone + Eq + Hash + Send + Sync>(v: &[T]) -> HrleVec<T> {
     // Case 1: Time Complexity: O(n)
     if v.iter().all_equal() {
         return HrleVec {
@@ -20,7 +21,8 @@ pub(crate) fn encode<T: Clone + Eq + Hash>(v: &[T]) -> HrleVec<T> {
     if v.iter().all_unique() {
         return HrleVec {
             runs: v
-                .iter()
+                .par_iter()
+                .with_min_len(1024)
                 .enumerate()
                 .map(|(i, x)| InternalRun {
                     end: i,
@@ -31,27 +33,53 @@ pub(crate) fn encode<T: Clone + Eq + Hash>(v: &[T]) -> HrleVec<T> {
         };
     }
 
-    // Case 3: Time Complexity: O(n^2)
-    let mut index = 0;
-    let mut runs = Vec::new();
+    // Case 3: Time Complexity: O(n^2 / m) where m is a number of parallelism
+    let mut runs: Vec<InternalRun<T>> = (0..v.len())
+        .into_par_iter()
+        .with_min_len(1024)
+        .map(|index| {
+            let (repeat, best_run) = find_best_run(v, index);
+            InternalRun {
+                end: index + repeat * best_run.len() - 1,
+                repeat,
+                values: best_run,
+            }
+        })
+        .collect();
 
-    while index < v.len() {
-        let (repeat, best_run) = find_best_run(v, index);
-        index += repeat * best_run.len();
-        runs.push(InternalRun {
-            end: index - 1,
-            repeat,
-            values: best_run,
-        });
+    // Time Complexity: O(n)
+    let mut index = 0;
+    let mut new_runs: Vec<InternalRun<T>> = Vec::new();
+    for next_index in 1..runs.len() {
+        if runs[index].end == runs.len() - 1 {
+            break;
+        }
+
+        // If cur's end is greater than or equal to next's start, then next
+        // should be ignored.  Next should just be ignored because cur should
+        // consist of next or next's run should just be incorrect.
+        let (left, right) = runs.split_at_mut(next_index);
+        let cur_run = &mut left[index];
+        let next_run = &right[0];
+
+        let cur_end = cur_run.end;
+        let next_start = next_run.end - next_run.repeat * next_run.values.len() + 1;
+        if cur_end < next_start {
+            new_runs.push(cur_run.clone());
+            index = next_index;
+        }
     }
 
-    HrleVec { runs }
+    // Add the last run.
+    new_runs.push(runs[index].clone());
+
+    HrleVec { runs: new_runs }
 }
 
+// Time Complexity: O(n/2) => O(n)
 fn find_best_run<T: Clone + Eq>(v: &[T], start: usize) -> (usize, Vec<T>) {
     let mut seq_length = 1;
 
-    // Time Complexity: O(n/2) => O(n)
     while start + seq_length * 2 <= v.len() {
         if v[start..start + seq_length] != v[start + seq_length..start + 2 * seq_length] {
             seq_length += 1;

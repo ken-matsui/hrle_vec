@@ -102,7 +102,7 @@ impl<'a, T: 'a> DoubleEndedIterator for Iter<'a, T> {
     }
 }
 
-impl<T: Eq + Clone + Hash> FromIterator<T> for HrleVec<T> {
+impl<T: Eq + Clone + Hash + Send + Sync> FromIterator<T> for HrleVec<T> {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
         let mut hrle = HrleVec::new();
         hrle.extend(iter);
