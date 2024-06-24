@@ -1,6 +1,37 @@
+use std::hash::Hash;
+
+use itertools::Itertools;
+
 use crate::{HrleVec, InternalRun};
 
-pub(crate) fn encode<T: Clone + Eq>(v: &[T]) -> HrleVec<T> {
+pub(crate) fn encode<T: Clone + Eq + Hash>(v: &[T]) -> HrleVec<T> {
+    // Case 1: Time Complexity: O(n)
+    if v.iter().all_equal() {
+        return HrleVec {
+            runs: vec![InternalRun {
+                end: v.len() - 1,
+                repeat: v.len(),
+                values: vec![v[0].clone()],
+            }],
+        };
+    }
+
+    // Case 2: Time Complexity: O(n)
+    if v.iter().all_unique() {
+        return HrleVec {
+            runs: v
+                .iter()
+                .enumerate()
+                .map(|(i, x)| InternalRun {
+                    end: i,
+                    repeat: 1,
+                    values: vec![x.clone()],
+                })
+                .collect(),
+        };
+    }
+
+    // Case 3: Time Complexity: TODO:
     let mut index = 0;
     let mut runs = Vec::new();
 

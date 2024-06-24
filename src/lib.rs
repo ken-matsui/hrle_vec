@@ -5,6 +5,7 @@ mod impls;
 mod iter;
 mod parse;
 
+use std::hash::Hash;
 use std::num::NonZeroUsize;
 use std::slice::SliceIndex;
 
@@ -539,7 +540,7 @@ impl<T: Clone> HrleVec<T> {
     }
 }
 
-impl<T: Eq + Clone> HrleVec<T> {
+impl<T: Eq + Clone + Hash> HrleVec<T> {
     /// Appends an element to the back of this [`HrleVec`].
     ///
     /// # Note
