@@ -22,7 +22,10 @@ fn save_results(name: &str, mem: &[f64]) {
     let mean = mean(mem);
     let std_dev = standard_deviation(mem, Some(mean)) as u64;
     let mean = mean as u64;
-    println!("=> {name} ... memory allocated: {mean:>11} KiB (+/- {std_dev})\n");
+    println!(
+        "{} ... memory allocated: {mean:>11} KiB (+/- {std_dev})\n",
+        " ".repeat(name.len().saturating_add(4))
+    );
 
     let file_path = "memory_benchmark_results.json";
     let mut results = if let Ok(mut file) = File::open(file_path) {
