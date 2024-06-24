@@ -377,11 +377,11 @@ impl<T> HrleVec<T> {
     /// assert_eq!(hrle.run_start(usize::MAX), 7);
     /// ```
     pub fn run_start(&self, run_index: usize) -> usize {
-        let mut start = 0;
-        for run in &self.runs[..run_index] {
-            start += run.len().get();
+        if run_index == 0 {
+            0
+        } else {
+            self.runs[run_index - 1].end + 1
         }
-        start
     }
 
     pub fn as_ref(&self) -> HrleVec<&T> {
