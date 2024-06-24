@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1719190165982,
+  "lastUpdate": 1719192594568,
   "repoUrl": "https://github.com/ken-matsui/hrle_vec",
   "entries": {
     "Memory Benchmark": [
@@ -684,6 +684,120 @@ window.BENCHMARK_DATA = {
             "value": 41942821,
             "unit": "KiB",
             "range": "47681"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "26405363+ken-matsui@users.noreply.github.com",
+            "name": "Ken Matsui",
+            "username": "ken-matsui"
+          },
+          "committer": {
+            "email": "26405363+ken-matsui@users.noreply.github.com",
+            "name": "Ken Matsui",
+            "username": "ken-matsui"
+          },
+          "distinct": true,
+          "id": "27b689c737bdfa96bffa4df97d784918f3bc0a74",
+          "message": "organize benches/memory.rs",
+          "timestamp": "2024-06-23T18:21:43-07:00",
+          "tree_id": "ec2d4b10cba3eddc2050feedebb7e956eaadc530",
+          "url": "https://github.com/ken-matsui/hrle_vec/commit/27b689c737bdfa96bffa4df97d784918f3bc0a74"
+        },
+        "date": 1719192593667,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Hrle - Memory Allocated",
+            "value": 2983,
+            "unit": "KiB",
+            "range": "338347"
+          },
+          {
+            "name": "Rle - Memory Allocated",
+            "value": 415,
+            "unit": "KiB",
+            "range": "57089"
+          },
+          {
+            "name": "Vec - Memory Allocated",
+            "value": 41942940,
+            "unit": "KiB",
+            "range": "14872"
+          },
+          {
+            "name": "Hrle - Memory Allocated",
+            "value": 813,
+            "unit": "KiB",
+            "range": "92480"
+          },
+          {
+            "name": "Rle - Memory Allocated",
+            "value": 268713976,
+            "unit": "KiB",
+            "range": "7191428"
+          },
+          {
+            "name": "Vec - Memory Allocated",
+            "value": 83885558,
+            "unit": "KiB",
+            "range": "82970"
+          },
+          {
+            "name": "Hrle - Memory Allocated",
+            "value": 250,
+            "unit": "KiB",
+            "range": "31295"
+          },
+          {
+            "name": "Rle - Memory Allocated",
+            "value": 268838687,
+            "unit": "KiB",
+            "range": "12182296"
+          },
+          {
+            "name": "Vec - Memory Allocated",
+            "value": 41942936,
+            "unit": "KiB",
+            "range": "15605"
+          },
+          {
+            "name": "Hrle - Memory Allocated",
+            "value": 49315872,
+            "unit": "KiB",
+            "range": "193015"
+          },
+          {
+            "name": "Rle - Memory Allocated",
+            "value": 1810,
+            "unit": "KiB",
+            "range": "161982"
+          },
+          {
+            "name": "Vec - Memory Allocated",
+            "value": 41942813,
+            "unit": "KiB",
+            "range": "137096"
+          },
+          {
+            "name": "Hrle - Memory Allocated",
+            "value": 752118023,
+            "unit": "KiB",
+            "range": "435823"
+          },
+          {
+            "name": "Rle - Memory Allocated",
+            "value": 268807461,
+            "unit": "KiB",
+            "range": "8226122"
+          },
+          {
+            "name": "Vec - Memory Allocated",
+            "value": 41942760,
+            "unit": "KiB",
+            "range": "52941"
           }
         ]
       }
