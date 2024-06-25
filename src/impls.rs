@@ -12,7 +12,7 @@ impl<T: Clone> Into<Vec<T>> for HrleVec<T> {
     }
 }
 
-impl<'a, T: Clone + Eq + Hash> From<&'a [T]> for HrleVec<T> {
+impl<'a, T: Clone + Eq + Hash + Send + Sync> From<&'a [T]> for HrleVec<T> {
     fn from(slice: &'a [T]) -> Self {
         encode(slice)
     }
@@ -48,7 +48,7 @@ impl<T> Index<usize> for HrleVec<T> {
     }
 }
 
-impl<T: Eq + Clone + Hash> Extend<T> for HrleVec<T> {
+impl<T: Eq + Clone + Hash + Send + Sync> Extend<T> for HrleVec<T> {
     fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
         let vec = self.to_vec().into_iter().chain(iter).collect::<Vec<T>>();
         *self = HrleVec::from(&vec[..]);

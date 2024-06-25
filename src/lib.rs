@@ -527,7 +527,7 @@ impl<T: Clone> HrleVec<T> {
     }
 }
 
-impl<T: Eq + Clone + Hash> HrleVec<T> {
+impl<T: Eq + Clone + Hash + Send + Sync> HrleVec<T> {
     /// Appends an element to the back of this [`HrleVec`].
     ///
     /// # Note
