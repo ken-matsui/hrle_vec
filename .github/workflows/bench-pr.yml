@@ -35,8 +35,6 @@ jobs:
           comment-on-alert: true
           # Enable Job Summary for PRs
           summary-always: true
-          # Mention @ken-matsui in the commit comment
-          alert-comment-cc-users: '@ken-matsui'
 
       - name: Remove memory benchmark result
         run: |
@@ -58,5 +56,3 @@ jobs:
           comment-on-alert: true
           # Enable Job Summary for PRs
           summary-always: true
-          # Mention @ken-matsui in the commit comment
-          alert-comment-cc-users: '@ken-matsui'
